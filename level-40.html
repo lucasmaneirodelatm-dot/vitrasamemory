@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Level 40 – VITRASA MEMORY</title>
+
+<style>
+  body{margin:0;font-family:Arial,sans-serif;background:#ffffff;color:#000;text-align:center;padding:20px}
+  #logo{width:180px;margin:20px auto;display:block}
+  #loader{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999}
+  #loader img{width:200px}
+  #progress{width:300px;height:20px;background:#444;border-radius:10px;margin-top:20px;overflow:hidden}
+  #progress-fill{height:100%;width:0;background:#0f0}
+  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-top:30px;padding:10px}
+  .carta{width:80px;height:80px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .carta img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
+  .flipped img{display:block}
+  .flipped span{display:none}
+  .msg-temp{position:fixed;top:18px;left:50%;transform:translateX(-50%);padding:8px 14px;border-radius:8px;color:#fff;z-index:99999}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader" aria-hidden="false">
+  <img src="https://vitrasa.es/documents/752794/2317260/LoaderAvanza.gif" alt="Cargando..." />
+  <div id="progress"><div id="progress-fill"></div></div>
+</div>
+
+<!-- Logo -->
+<img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
+<h1>Nivel 0</h1>
+<p>Levanta dos parejas</p>
+
+<div id="tablero" aria-live="polite"></div>
+
+<script>
+/* ---------------------------
+   CONFIG: lista de imágenes
+   Pon aquí las URLs completas (una por línea)
+   --------------------------- */
+let imagenesBase = [
+  // Si quieres usar tus imágenes pégalas aquí. Ejemplos:
+  // "https://vigo360.es/static/images/45-minutos-siguen-siendo-poco.webp",
+  // "https://vigo360.es/static/images/vitrasa-que-lle-den-polo-cu.webp",
+  // "https://vigo360.es/static/images/vitrasa-lozano-ruinosa.webp"
+];
+
+// ---------------------------
+// Seguridad: si está vacío, usar fallback de prueba
+// ---------------------------
+if (!Array.isArray(imagenesBase)) imagenesBase = [];
+if (imagenesBase.length === 0) {
+  imagenesBase = [
+    "https://eauoiapi5ky.exactdn.com/wp-content/uploads/2023/03/Presentacion-buses-Vitrasa-3.jpeg?strip=all&lossy=1&w=969&ssl=1",
+    "https://www.vigoalminuto.com/wp-content/uploads/2016/10/vitrasa01.jpg",
+    "https://estaticos-cdn.prensaiberica.es/clip/0fce9e8b-55ad-4b10-8897-a24205e01f3a_16-9-discover-aspect-ratio_default_1381571.webp",
+    "https://estaticos-cdn.prensaiberica.es/clip/e02bcfc2-d521-41a9-91bc-4370fe13b179_16-9-discover-aspect-ratio_default_0.webp",
+    "https://estaticos-cdn.prensaiberica.es/clip/1b2fb72c-5c82-492a-a629-8aa7d14bc25a_source-aspect-ratio_default_0.jpg",
+    "https://i0.wp.com/valminortv.com/wp-content/uploads/2025/06/2025-06-01-VITRASA-NAVIDAD.jpg?w=1024&ssl=1",
+    "https://static.laregion.es/clip/29341df2-c89c-461f-a1f9-9d462c85c430_16-9-aspect-ratio_1600w_0.webp",
+    "https://img.lavdg.com/sc/jFtQvlxbnEvANOBl8dk8mIlWp_w=/768x/2024/12/19/00121734611881367768659/Foto/V_20240115_164432000.jpg",
+    "https://metropolitano.gal/wp-content/uploads/2020/11/autobus-vitrasa_7225-1.jpg",
+    "https://metropolitano.gal/wp-content/uploads/2025/08/Buses-Vigo-Vitrasa-Solaris.jpg",
+    "https://www.vigoalminuto.com/wp-content/uploads/2024/12/20241219_131934-scaled-1536x860.jpg",
+    "https://vigo360.es/static/images/las-lineas-mas-largas.webp",
+    "https://vigo360.es/static/images/caida-desgracia-c2.webp",
+    "https://vigo360.es/static/images/nuevos-recortes-vitrasa.webp",
+    "https://vigo360.es/static/images/prorroga-vitrasa-ilegal.webp",
+    "https:/vigo360.es/static/images/culpa-bus.webp",
+    "https:/vigo360.es/static/images/crisis-vitrasa.webp",
+    "https:/vigo360.es/static/images/nueva-linea-a-queja-bng.webp",
+    "https:/vigo360.es/static/images/el-ultimo-viaje-del-8.webp",
+    "https:/vigo360.es/static/images/porque-no-transporte-publico.webp",
+    "https:/vigo360.es/static/images/corte-puerta-del-sol.webp",
+    "https:/vigo360.es/static/images/bajada-sueldo-empleados-vitrasa.webp",
+    "https:/vigo360.es/static/images/bajada-sueldo-vitraseros.webp",
+    "https:/vigo360.es/static/images/45-minutos-siguen-siendo-poco.webp",
+    "https:/vigo360.es/static/images/tarjetas-transporte-digitales.webp",
+    "https:/vigo360.es/static/images/huelga-vitrasa-20-enero-23.webp",
+    "https:/vigo360.es/static/images/problemas-bajada-sueldo.webp",
+    "https:/vigo360.es/static/images/llegan-los-nuevos-vitrasa.webp",
+    "https:/vigo360.es/static/images/huelga-vitrasa-alcalde-habla.webp",
+    "https:/vigo360.es/static/images/bienvenidos-volvo.webp",
+    "https:/vigo360.es/static/images/critica-siam.webp",
+    "https:/vigo360.es/static/images/subida-precio-billete.webp",
+    "https:/vigo360.es/static/images/municipalizar-vitrasa-buena-idea.webp",
+    "https:/vigo360.es/static/images/huelga-mayo-23.webp",
+    "https:/vigo360.es/static/images/huelga-junio-23.webp",
+    "https:/vigo360.es/static/images/concello-vigo-saca-concurso-calculo-ruta.webp",
+    "https:/vigo360.es/static/images/huelga-vitrasa-y-que.webp",
+    "https:/vigo360.es/static/images/tarjeta-passvigo-movil.webp",
+    "https:/vigo360.es/static/images/decadencia-vitrasa.webp",
+    "https:/vigo360.es/static/images/vitrasa-marisquio-2023.webp",
+    "https:/vigo360.es/static/images/retirada-concesion-vitrasa.webp",
+    "https:/vigo360.es/static/images/conspiracion-bng-cig.webp",
+    "https:/vigo360.es/static/images/el-verdadero-grinch-navidad.webp",
+    "https:/vigo360.es/static/images/las-perdidas-de-vitrasa.webp",
+    "https:/vigo360.es/static/images/vitrasa-sube-tarifas-2024.webp",
+    "https:/vigo360.es/static/images/carta-abierta-director-vitrasa.webp",
+    "https:/vigo360.es/static/images/dos-meses-huelga.webp",
+    "https:/vigo360.es/static/images/logros-director-vitrasa-dos.webp",
+    "https:/vigo360.es/static/images/las-cuentas-vitrasa-descubierto.webp",,
+    "https:/vigo360.es/static/images/carlos-gonzalez-psoe.webp",
+    "https:/vigo360.es/static/images/tres-meses-huelga.webp",
+    "https:/vigo360.es/static/images/vitrasa-tope-edad.webp",
+    "https:/vigo360.es/static/images/cien-dias-huelga.webp",
+    "https:/vigo360.es/static/images/servicio-directo-aeropuerto.webp",
+    "https:/vigo360.es/static/images/recortes-lineas-huelga.webp",
+    "https:/vigo360.es/static/images/logros-carlos-gonzalez-vitrasa-dos.webp",
+    "https:/vigo360.es/static/images/vitrasa-trata-mal-poulo.webp",
+    "https:/vigo360.es/static/images/falta-servicios-fin-semana.webp",
+    "https:/vigo360.es/static/images/lo-que-cuesta-vitrasa.webp",
+    "https:/vigo360.es/static/images/zamans-vitrasa-alcalde.webp",
+    "https:/vigo360.es/static/images/vitrasa-mantiene-recortes.webp"
+    
+  ];
+}
+
+// ---------------------------
+// CÁLCULO: dividir entre 0.5 -> x2 -> tomar 1/3
+// ---------------------------
+function calcularImagenes(imagenes){
+  const multiplicado = imagenes.length / 0.5; // *2
+  const tercio = Math.floor(multiplicado / 3);
+  const cantidad = Math.max(1, tercio);
+  // Si la lista es más corta que cantidad, devolvemos la lista completa
+  return imagenes.slice(0, Math.min(cantidad, imagenes.length));
+}
+
+// ---------------------------
+// Loader (simulado) con protección de errores
+// ---------------------------
+let progreso = 0;
+let intervalo = null;
+
+function startLoaderAndInit(){
+  try {
+    const fillEl = document.getElementById('progress-fill');
+    intervalo = setInterval(()=>{
+      progreso = Math.min(100, progreso + 4);
+      fillEl.style.width = progreso + '%';
+      if(progreso >= 100){
+        clearInterval(intervalo);
+        document.getElementById('loader').style.display = 'none';
+        // pequeña espera para dejar que el DOM se actualice
+        setTimeout(iniciarNivel, 120);
+      }
+    }, 40);
+  } catch(e) {
+    console.error('Error en loader:', e);
+    // asegurar que no quede bloqueado
+    clearInterval(intervalo);
+    document.getElementById('loader').style.display = 'none';
+    iniciarNivel();
+  }
+}
+
+// ---------------------------
+// Genera tablero
+// ---------------------------
+function iniciarNivel(){
+  try {
+    const seleccion = calcularImagenes(imagenesBase);
+    // duplicar para pares
+    let baraja = [...seleccion, ...seleccion];
+    // si no hay suficientes elementos (por seguridad)
+    if (!baraja.length) {
+      console.warn('Baraja vacía; usando logo como fallback');
+      baraja = [document.getElementById('logo').src, document.getElementById('logo').src];
+    }
+    // mezclar
+    baraja = baraja.sort(()=>Math.random() - 0.5);
+
+    const tablero = document.getElementById('tablero');
+    tablero.innerHTML = '';
+
+    baraja.forEach(ruta => {
+      const carta = document.createElement('div');
+      carta.className = 'carta';
+      carta.innerHTML = `<span aria-hidden="true">?</span><img src="${ruta}" alt="Carta">`;
+      carta.addEventListener('click', ()=>voltear(carta));
+      tablero.appendChild(carta);
+    });
+  } catch(err) {
+    console.error('Error iniciando nivel:', err);
+    showTempMessage('Error iniciando nivel. Mira la consola.', '#d9534f');
+  }
+}
+
+// ---------------------------
+// Lógica de volteo y control de pares
+// ---------------------------
+let primera = null;
+
+function voltear(carta){
+  if(carta.classList.contains('flipped')) return;
+  carta.classList.add('flipped');
+
+  if(!primera){
+    primera = carta;
+    return;
+  }
+
+  const img1 = primera.querySelector('img')?.src || '';
+  const img2 = carta.querySelector('img')?.src || '';
+
+  if(img1 === img2){
+    // acierto
+    eventoAcierto();
+    primera = null;
+
+    // comprobar victoria
+    const totalVolteadas = document.querySelectorAll('.carta.flipped').length;
+    const totalCartas = document.querySelectorAll('.carta').length;
+    if(totalVolteadas === totalCartas){
+      setTimeout(eventoVictoria, 400);
+    }
+  } else {
+    // fallo -> girar tras un pequeño delay
+    setTimeout(()=>{
+      try {
+        primera.classList.remove('flipped');
+        carta.classList.remove('flipped');
+      } catch(e) { console.warn('Error al girar cartas:', e); }
+      primera = null;
+    }, 600);
+  }
+}
+
+// ---------------------------
+// Mensaje temporal (acierto / errores)
+// ---------------------------
+function showTempMessage(text, bg='#00cc00', ms=800){
+  const aviso = document.createElement('div');
+  aviso.className = 'msg-temp';
+  aviso.textContent = text;
+  aviso.style.background = bg;
+  aviso.style.color = '#fff';
+  aviso.style.padding = '8px 14px';
+  aviso.style.borderRadius = '8px';
+  aviso.style.zIndex = 99999;
+  document.body.appendChild(aviso);
+  setTimeout(()=>{ aviso.style.opacity = '0'; setTimeout(()=>aviso.remove(), 400); }, ms);
+}
+
+// evento acierto
+function eventoAcierto(){
+  showTempMessage('¡Acierto!', '#007f3f', 700);
+}
+
+// ---------------------------
+// Evento victoria: modal y redirección segura
+// ---------------------------
+function eventoVictoria(){
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0,0,0,0.85)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.zIndex = '100000';
+  overlay.innerHTML = `
+    <div style="text-align:center;color:white;">
+      <p style="font-size:28px;margin:0 0 18px 0">¡Enhorabuena! ¡Nivel completado!</p>
+      <div>
+        <button id="continuarBtn" style="font-size:18px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Continuar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  document.getElementById('continuarBtn').addEventListener('click', ()=>{
+    // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
+    // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
+    try {
+      const next = "file:///home/usuario/AMP/GAME%20GM/.vitrasamemory/levels/level-41.html";
+      window.location.href = next;
+    } catch(e) {
+      console.error('Redirección fallida', e);
+      showTempMessage('No se pudo cambiar de nivel', '#d9534f', 1200);
+    }
+  });
+}
+
+// ---------------------------
+// Iniciar loader + nivel
+// ---------------------------
+startLoaderAndInit();
+</script>
+
+</body>
+</html>

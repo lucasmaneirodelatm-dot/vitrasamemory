@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Level 0 – VITRASA MEMORY</title>
+
+<style>
+  body{margin:0;font-family:Arial,sans-serif;background:#ffffff;color:#000;text-align:center;padding:20px}
+  #logo{width:180px;margin:20px auto;display:block}
+  #loader{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999}
+  #loader img{width:200px}
+  #progress{width:300px;height:20px;background:#444;border-radius:10px;margin-top:20px;overflow:hidden}
+  #progress-fill{height:100%;width:0;background:#0f0}
+  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-top:30px;padding:10px}
+  .carta{width:80px;height:80px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .carta img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
+  .flipped img{display:block}
+  .flipped span{display:none}
+  .msg-temp{position:fixed;top:18px;left:50%;transform:translateX(-50%);padding:8px 14px;border-radius:8px;color:#fff;z-index:99999}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader" aria-hidden="false">
+  <img src="https://vitrasa.es/documents/752794/2317260/LoaderAvanza.gif" alt="Cargando..." />
+  <div id="progress"><div id="progress-fill"></div></div>
+</div>
+
+<!-- Logo -->
+<img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
+<h1>Nivel 0</h1>
+<p>Levanta dos parejas</p>
+
+<div id="tablero" aria-live="polite"></div>
+
+<script>
+/* ---------------------------
+   CONFIG: lista de imágenes
+   Pon aquí las URLs completas (una por línea)
+   --------------------------- */
+let imagenesBase = [
+  // Si quieres usar tus imágenes pégalas aquí. Ejemplos:
+  // "https://vigo360.es/static/images/45-minutos-siguen-siendo-poco.webp",
+  // "https://vigo360.es/static/images/vitrasa-que-lle-den-polo-cu.webp",
+  // "https://vigo360.es/static/images/vitrasa-lozano-ruinosa.webp"
+];
+
+// ---------------------------
+// Seguridad: si está vacío, usar fallback de prueba
+// ---------------------------
+if (!Array.isArray(imagenesBase)) imagenesBase = [];
+if (imagenesBase.length === 0) {
+  imagenesBase = [
+    "data:image/png;base64,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",
+    "https://intranet.vitrasa.es/img/logo_vitrasa.png"
+    
+  ];
+}
+
+// ---------------------------
+// CÁLCULO: dividir entre 0.5 -> x2 -> tomar 1/3
+// ---------------------------
+function calcularImagenes(imagenes){
+  const multiplicado = imagenes.length / 0.5; // *2
+  const tercio = Math.floor(multiplicado / 3);
+  const cantidad = Math.max(1, tercio);
+  // Si la lista es más corta que cantidad, devolvemos la lista completa
+  return imagenes.slice(0, Math.min(cantidad, imagenes.length));
+}
+
+// ---------------------------
+// Loader (simulado) con protección de errores
+// ---------------------------
+let progreso = 0;
+let intervalo = null;
+
+function startLoaderAndInit(){
+  try {
+    const fillEl = document.getElementById('progress-fill');
+    intervalo = setInterval(()=>{
+      progreso = Math.min(100, progreso + 4);
+      fillEl.style.width = progreso + '%';
+      if(progreso >= 100){
+        clearInterval(intervalo);
+        document.getElementById('loader').style.display = 'none';
+        // pequeña espera para dejar que el DOM se actualice
+        setTimeout(iniciarNivel, 120);
+      }
+    }, 40);
+  } catch(e) {
+    console.error('Error en loader:', e);
+    // asegurar que no quede bloqueado
+    clearInterval(intervalo);
+    document.getElementById('loader').style.display = 'none';
+    iniciarNivel();
+  }
+}
+
+// ---------------------------
+// Genera tablero
+// ---------------------------
+function iniciarNivel(){
+  try {
+    const seleccion = calcularImagenes(imagenesBase);
+    // duplicar para pares
+    let baraja = [...seleccion, ...seleccion];
+    // si no hay suficientes elementos (por seguridad)
+    if (!baraja.length) {
+      console.warn('Baraja vacía; usando logo como fallback');
+      baraja = [document.getElementById('logo').src, document.getElementById('logo').src];
+    }
+    // mezclar
+    baraja = baraja.sort(()=>Math.random() - 0.5);
+
+    const tablero = document.getElementById('tablero');
+    tablero.innerHTML = '';
+
+    baraja.forEach(ruta => {
+      const carta = document.createElement('div');
+      carta.className = 'carta';
+      carta.innerHTML = `<span aria-hidden="true">?</span><img src="${ruta}" alt="Carta">`;
+      carta.addEventListener('click', ()=>voltear(carta));
+      tablero.appendChild(carta);
+    });
+  } catch(err) {
+    console.error('Error iniciando nivel:', err);
+    showTempMessage('Error iniciando nivel. Mira la consola.', '#d9534f');
+  }
+}
+
+// ---------------------------
+// Lógica de volteo y control de pares
+// ---------------------------
+let primera = null;
+
+function voltear(carta){
+  if(carta.classList.contains('flipped')) return;
+  carta.classList.add('flipped');
+
+  if(!primera){
+    primera = carta;
+    return;
+  }
+
+  const img1 = primera.querySelector('img')?.src || '';
+  const img2 = carta.querySelector('img')?.src || '';
+
+  if(img1 === img2){
+    // acierto
+    eventoAcierto();
+    primera = null;
+
+    // comprobar victoria
+    const totalVolteadas = document.querySelectorAll('.carta.flipped').length;
+    const totalCartas = document.querySelectorAll('.carta').length;
+    if(totalVolteadas === totalCartas){
+      setTimeout(eventoVictoria, 400);
+    }
+  } else {
+    // fallo -> girar tras un pequeño delay
+    setTimeout(()=>{
+      try {
+        primera.classList.remove('flipped');
+        carta.classList.remove('flipped');
+      } catch(e) { console.warn('Error al girar cartas:', e); }
+      primera = null;
+    }, 600);
+  }
+}
+
+// ---------------------------
+// Mensaje temporal (acierto / errores)
+// ---------------------------
+function showTempMessage(text, bg='#00cc00', ms=800){
+  const aviso = document.createElement('div');
+  aviso.className = 'msg-temp';
+  aviso.textContent = text;
+  aviso.style.background = bg;
+  aviso.style.color = '#fff';
+  aviso.style.padding = '8px 14px';
+  aviso.style.borderRadius = '8px';
+  aviso.style.zIndex = 99999;
+  document.body.appendChild(aviso);
+  setTimeout(()=>{ aviso.style.opacity = '0'; setTimeout(()=>aviso.remove(), 400); }, ms);
+}
+
+// evento acierto
+function eventoAcierto(){
+  showTempMessage('¡Acierto!', '#007f3f', 700);
+}
+
+// ---------------------------
+// Evento victoria: modal y redirección segura
+// ---------------------------
+function eventoVictoria(){
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0,0,0,0.85)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.zIndex = '100000';
+  overlay.innerHTML = `
+    <div style="text-align:center;color:white;">
+      <p style="font-size:28px;margin:0 0 18px 0">¡Enhorabuena! ¡Nivel completado!</p>
+      <div>
+        <button id="continuarBtn" style="font-size:18px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Continuar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  document.getElementById('continuarBtn').addEventListener('click', ()=>{
+    // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
+    // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
+    try {
+      const next = "file:///home/usuario/AMP/GAME%20GM/.vitrasamemory/levels/level-0.html";
+      window.location.href = next;
+    } catch(e) {
+      console.error('Redirección fallida', e);
+      showTempMessage('No se pudo cambiar de nivel', '#d9534f', 1200);
+    }
+  });
+}
+
+// ---------------------------
+// Iniciar loader + nivel
+// ---------------------------
+startLoaderAndInit();
+</script>
+
+</body>
+</html>
