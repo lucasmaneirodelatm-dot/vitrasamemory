@@ -1,1 +1,86 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>VITRASA CHASE</title></head><body><h1>VITRASA CHASE</h1></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>VITRASA MEMORY – Niveles</title>
+<style>
+  body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#ffffff;
+    color:#000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:40px;
+  }
+  #logo{
+    width:180px;
+    margin-bottom:20px;
+  }
+  h1{
+    margin:0 0 20px 0;
+  }
+  select{
+    padding:10px;
+    font-size:18px;
+    margin-top:20px;
+  }
+  button{
+    margin-top:20px;
+    padding:12px 20px;
+    font-size:18px;
+    cursor:pointer;
+  }
+  .dif{
+    padding:4px 10px;
+    border-radius:6px;
+    margin-left:10px;
+    font-weight:bold;
+  }
+</style>
+</head>
+<body>
+
+<img id="logo" src="https://vigoplan.com/wp-content/uploads/2023/02/vitrasa-300x250.png.webp" alt="Logo" />
+<h1>MEMORY VITRASA</h1>
+
+<label for="nivel">Selecciona nivel:</label>
+<select id="nivel"></select>
+<div id="dif-label"></div>
+
+<button id="jugar">Jugar</button>
+
+<script>
+const select = document.getElementById('nivel');
+const difLabel = document.getElementById('dif-label');
+const jugarBtn = document.getElementById('jugar');
+
+function dificultadColor(n){
+  if(n <= 15) return {t:'Fácil', c:'green'};
+  if(n <= 35) return {t:'Medio', c:'yellow'};
+  if(n <= 45) return {t:'Difícil', c:'orange'};
+  return {t:'Imposible', c:'red'};
+}
+
+for(let i=0;i<=60;i++){
+  const op = document.createElement('option');
+  op.value = i;
+  op.textContent = `Nivel ${i}`;
+  select.appendChild(op);
+}
+
+select.addEventListener('change', ()=>{
+  const d = dificultadColor(parseInt(select.value));
+  difLabel.innerHTML = `<span class='dif' style='color:${d.c}'>${d.t}</span>`;
+});
+
+jugarBtn.addEventListener('click', ()=>{
+  const n = select.value;
+  window.location.href = `https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-${n}.html`;
+});
+</script>
+
+</body>
+</html>
