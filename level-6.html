@@ -13,7 +13,7 @@
   #progress{width:300px;height:20px;background:#444;border-radius:10px;margin-top:20px;overflow:hidden}
   #progress-fill{height:100%;width:0;background:#0f0}
   #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-top:30px;padding:10px}
-  .carta{width:80px;height:80px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .carta{width:280px;height:280px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .carta img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
   .flipped img{display:block}
   .flipped span{display:none}
@@ -30,7 +30,7 @@
 
 <!-- Logo -->
 <img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
-<h1>Nivel 0</h1>
+<h1>Nivel 6</h1>
 <p>Levanta dos parejas</p>
 
 <div id="tablero" aria-live="polite"></div>
@@ -53,16 +53,16 @@ let imagenesBase = [
 if (!Array.isArray(imagenesBase)) imagenesBase = [];
 if (imagenesBase.length === 0) {
   imagenesBase = [
-    "https://eauoiapi5ky.exactdn.com/wp-content/uploads/2023/03/Presentacion-buses-Vitrasa-3.jpeg?strip=all&lossy=1&w=969&ssl=1",
-    "https://www.vigoalminuto.com/wp-content/uploads/2016/10/vitrasa01.jpg",
-    "https://estaticos-cdn.prensaiberica.es/clip/0fce9e8b-55ad-4b10-8897-a24205e01f3a_16-9-discover-aspect-ratio_default_1381571.webp",
-    "https://estaticos-cdn.prensaiberica.es/clip/e02bcfc2-d521-41a9-91bc-4370fe13b179_16-9-discover-aspect-ratio_default_0.webp",
-    "https://estaticos-cdn.prensaiberica.es/clip/1b2fb72c-5c82-492a-a629-8aa7d14bc25a_source-aspect-ratio_default_0.jpg",
-    "https://i0.wp.com/valminortv.com/wp-content/uploads/2025/06/2025-06-01-VITRASA-NAVIDAD.jpg?w=1024&ssl=1",
-    "https://static.laregion.es/clip/29341df2-c89c-461f-a1f9-9d462c85c430_16-9-aspect-ratio_1600w_0.webp",
-    "https://img.lavdg.com/sc/jFtQvlxbnEvANOBl8dk8mIlWp_w=/768x/2024/12/19/00121734611881367768659/Foto/V_20240115_164432000.jpg",
-    "https://metropolitano.gal/wp-content/uploads/2020/11/autobus-vitrasa_7225-1.jpg",
-    "https://metropolitano.gal/wp-content/uploads/2025/08/Buses-Vigo-Vitrasa-Solaris.jpg"
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/31.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/4A.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/9A(1)_6208.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/A(1)_urzaiz%23principe.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C1(3)_a-laxe.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C1_calle-barcelona.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3(6).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3(7)_plaza-ameirca_dia-sin-coches_6234.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3-entrando-en-vigo.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3(5)_samil.png"
     
   ];
 }
@@ -225,7 +225,7 @@ function eventoVictoria(){
     // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
     // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
     try {
-      const next = "file:///home/usuario/AMP/GAME%20GM/.vitrasamemory/levels/level-7.html";
+      const next = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-7.html";
       window.location.href = next;
     } catch(e) {
       console.error('Redirección fallida', e);
