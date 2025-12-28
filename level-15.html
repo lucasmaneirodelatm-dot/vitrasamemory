@@ -12,8 +12,8 @@
   #loader img{width:200px}
   #progress{width:300px;height:20px;background:#444;border-radius:10px;margin-top:20px;overflow:hidden}
   #progress-fill{height:100%;width:0;background:#0f0}
-  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-top:30px;padding:10px}
-  .carta{width:80px;height:80px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:30px;padding:10px}
+  .carta{width:180px;height:180px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .carta img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
   .flipped img{display:block}
   .flipped span{display:none}
@@ -30,7 +30,7 @@
 
 <!-- Logo -->
 <img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
-<h1>Nivel 0</h1>
+<h1>Nivel 15</h1>
 <p>Levanta dos parejas</p>
 
 <div id="tablero" aria-live="polite"></div>
@@ -53,30 +53,30 @@ let imagenesBase = [
 if (!Array.isArray(imagenesBase)) imagenesBase = [];
 if (imagenesBase.length === 0) {
   imagenesBase = [
-    "https://vigo360.es/static/images/cuentas-vitrasa-2024.webp",
-    "https:/vigo360.es/static/images/transparencia-transporte-publico-vigues.webp",
-    "https:/vigo360.es/static/images/vitrasa-lozano-ruinosa.webp",
-    "https:/vigo360.es/static/images/pago-tarjeta-credito.webp",
-    "https:/vigo360.es/static/images/caso-incendio-vitrasa.webp",
-    "https:/vigo360.es/static/images/vitrasa-prorroga-ruina.webp",
-    "https:/vigo360.es/static/images/vitrasa-precario.webp",
-    "https:/vigo360.es/static/images/proyecto-lineas-cunqueiro.webp",
-    "https:/vigo360.es/static/images/vigo-vertical-vitrasa.webp",
-    "https:/vigo360.es/static/images/entrevista-hermes-tv.webp",
-    "https:/vigo360.es/static/images/vitrasa-mal-gestionada.webp",
-    "https:/vigo360.es/static/images/nuevos-volvo-b5l.webp",
-    "https:/vigo360.es/static/images/vitrasa-dep.webp",
-    "https:/vigo360.es/static/images/fin-huelga-vitrasa.webp",
-    "https:/vigo360.es/static/images/recortes-lineas-vitrasa-kilometros.webp",
-    "https:/vigo360.es/static/images/vitrasa-rie-vigueses.webp",
-    "https:/vigo360.es/static/images/carta-navidad-2024.webp",
-    "https:/vigo360.es/static/images/vitrasa-que-lle-den-polo-cu.webp",
-    "https:/vigo360.es/static/images/gonzalo-alvarez-arrojo.webp",
-    "https:/vigo360.es/static/images/cuentas-vitrasa-2023.webp",
-    "https:/vigo360.es/static/images/vitrasa-movilizacion-permanente.webp",
-    "https:/vigo360.es/static/images/la-reforma-de-vitrasa-de-2002.webp",
-    "https:/vigo360.es/static/images/futuro-servicio-demanda-vigo.webp",
-    "https:/vigo360.es/static/images/la-circular-inversa.webp"
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/0e36381b-d1eb-445c-92c8-fa40f4a82983_16-9-aspect-ratio_50p_0.jpg",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/31.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/4A.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/5dc9ab86-117f-4d1e-b2e0-fa0b27f0af30_16-9-aspect-ratio_50p_0.jpg",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/753c21c5-199c-4855-b0d1-e080674a9184_16-9-aspect-ratio_50p_1210453.jpg",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/9A(1)_6208.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/9dc8613d-60e4-4323-a92f-bea0ade5f255_16-9-aspect-ratio_50p_0.jpg",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/A(1)_urzaiz%23principe.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C1(3)_a-laxe.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C1_calle-barcelona.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3(5)_samil.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3(6).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3(7)_plaza-ameirca_dia-sin-coches_6234.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/C3-entrando-en-vigo.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L10_fuera-espana_antiguos-autobuses.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L15A(1)_pizarro.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L15C_6239_samil.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L27(2)_pizarro.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L4A_servicios-minimos_y-18B-tapado.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L5A(1)_6224_plaza-compostela.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(1).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(22).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(23).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(23).png"
 
   ];
 }
@@ -239,7 +239,7 @@ function eventoVictoria(){
     // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
     // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
     try {
-      const next = "file:///home/usuario/AMP/GAME%20GM/.vitrasamemory/levels/level-16.html";
+      const next = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-16.html";
       window.location.href = next;
     } catch(e) {
       console.error('Redirección fallida', e);
