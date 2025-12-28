@@ -12,8 +12,8 @@
   #loader img{width:200px}
   #progress{width:300px;height:20px;background:#444;border-radius:10px;margin-top:20px;overflow:hidden}
   #progress-fill{height:100%;width:0;background:#0f0}
-  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-top:30px;padding:10px}
-  .carta{width:80px;height:80px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:30px;padding:10px}
+  .carta{width:180px;height:180px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .carta img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
   .flipped img{display:block}
   .flipped span{display:none}
@@ -30,7 +30,7 @@
 
 <!-- Logo -->
 <img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
-<h1>Nivel 0</h1>
+<h1>Nivel 14</h1>
 <p>Levanta dos parejas</p>
 
 <div id="tablero" aria-live="polite"></div>
@@ -53,28 +53,28 @@ let imagenesBase = [
 if (!Array.isArray(imagenesBase)) imagenesBase = [];
 if (imagenesBase.length === 0) {
   imagenesBase = [
-    "https://eauoiapi5ky.exactdn.com/wp-content/uploads/2023/03/Presentacion-buses-Vitrasa-3.jpeg?strip=all&lossy=1&w=969&ssl=1",
-    "https://www.vigoalminuto.com/wp-content/uploads/2016/10/vitrasa01.jpg",
-    "https://estaticos-cdn.prensaiberica.es/clip/0fce9e8b-55ad-4b10-8897-a24205e01f3a_16-9-discover-aspect-ratio_default_1381571.webp",
-    "https://estaticos-cdn.prensaiberica.es/clip/e02bcfc2-d521-41a9-91bc-4370fe13b179_16-9-discover-aspect-ratio_default_0.webp",
-    "https://estaticos-cdn.prensaiberica.es/clip/1b2fb72c-5c82-492a-a629-8aa7d14bc25a_source-aspect-ratio_default_0.jpg",
-    "https://i0.wp.com/valminortv.com/wp-content/uploads/2025/06/2025-06-01-VITRASA-NAVIDAD.jpg?w=1024&ssl=1",
-    "https://static.laregion.es/clip/29341df2-c89c-461f-a1f9-9d462c85c430_16-9-aspect-ratio_1600w_0.webp",
-    "https://img.lavdg.com/sc/jFtQvlxbnEvANOBl8dk8mIlWp_w=/768x/2024/12/19/00121734611881367768659/Foto/V_20240115_164432000.jpg",
-    "https://metropolitano.gal/wp-content/uploads/2020/11/autobus-vitrasa_7225-1.jpg",
-    "https://metropolitano.gal/wp-content/uploads/2025/08/Buses-Vigo-Vitrasa-Solaris.jpg",
-    "https://www.vigoalminuto.com/wp-content/uploads/2024/12/20241219_131934-scaled-1536x860.jpg",
-    "https://vigo360.es/static/images/las-lineas-mas-largas.webp",
-    "https://vigo360.es/static/images/caida-desgracia-c2.webp",
-    "https://vigo360.es/static/images/nuevos-recortes-vitrasa.webp",
-    "https://vigo360.es/static/images/prorroga-vitrasa-ilegal.webp",
-    "https:/vigo360.es/static/images/culpa-bus.webp",
-    "https:/vigo360.es/static/images/crisis-vitrasa.webp",
-    "https:/vigo360.es/static/images/nueva-linea-a-queja-bng.webp",
-    "https:/vigo360.es/static/images/el-ultimo-viaje-del-8.webp",
-    "https:/vigo360.es/static/images/porque-no-transporte-publico.webp",
-    "https:/vigo360.es/static/images/corte-puerta-del-sol.webp",
-    "https:/vigo360.es/static/images/bajada-sueldo-empleados-vitrasa.webp"
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/vitrasa-movilizacion-permanente.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/vitrasa-mantiene-recortes.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/vitrasa-lozano-ruinosa.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/tarjetas-transporte-digitales.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/tarjeta-passvigo-movil.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/porque-no-transporte-publico.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/por-que-vitrasa-no-hibridos.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/los-recortes-lineas-vitrasa.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/lo-que-cuesta-vitrasa.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/la-reforma-de-vitrasa-de-2002.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/huelga-vitrasa-principio-fin.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/huelga-mayo-23.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/frecuencias-dinamicas-vitrasa.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/falta-servicios-fin-semana.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/dos-anos-blog.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/cde084da-e0e4-4bd8-84cd-7c2b56a46a36_16-9-aspect-ratio_1600w_0.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/busnadal.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/be65c705-206d-4fe0-9549-460c140dfc46_16-9-aspect-ratio_1600w_0.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/V_20241028_170708000.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/V12A2727.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/94bab8a1-6dae-4f74-9a43-8180bfcf0423_16-9-aspect-ratio_1600w_0.webp",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/9315785a-f355-437f-9a44-ff4f7d508535_16-9-aspect-ratio_1600w_0.webp"
     
   ];
 }
@@ -237,7 +237,7 @@ function eventoVictoria(){
     // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
     // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
     try {
-      const next = "file:///home/usuario/AMP/GAME%20GM/.vitrasamemory/levels/level-15.html";
+      const next = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-15.html";
       window.location.href = next;
     } catch(e) {
       console.error('Redirección fallida', e);
