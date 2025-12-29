@@ -12,8 +12,8 @@
   #loader img{width:200px}
   #progress{width:300px;height:20px;background:#444;border-radius:10px;margin-top:20px;overflow:hidden}
   #progress-fill{height:100%;width:0;background:#0f0}
-  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-top:30px;padding:10px}
-  .carta{width:80px;height:80px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  #tablero{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:30px;padding:10px}
+  .carta{width:180px;height:180px;background:#222;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .carta img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
   .flipped img{display:block}
   .flipped span{display:none}
@@ -30,7 +30,7 @@
 
 <!-- Logo -->
 <img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
-<h1>Nivel 0</h1>
+<h1>Nivel 16</h1>
 <p>Levanta dos parejas</p>
 
 <div id="tablero" aria-live="polite"></div>
@@ -53,31 +53,31 @@ let imagenesBase = [
 if (!Array.isArray(imagenesBase)) imagenesBase = [];
 if (imagenesBase.length === 0) {
   imagenesBase = [
-    "https://eauoiapi5ky.exactdn.com/wp-content/uploads/2023/03/Presentacion-buses-Vitrasa-3.jpeg?strip=all&lossy=1&w=969&ssl=1",
-    "https://www.vigoalminuto.com/wp-content/uploads/2016/10/vitrasa01.jpg",
-    "https://estaticos-cdn.prensaiberica.es/clip/0fce9e8b-55ad-4b10-8897-a24205e01f3a_16-9-discover-aspect-ratio_default_1381571.webp",
-    "https://estaticos-cdn.prensaiberica.es/clip/e02bcfc2-d521-41a9-91bc-4370fe13b179_16-9-discover-aspect-ratio_default_0.webp",
-    "https://estaticos-cdn.prensaiberica.es/clip/1b2fb72c-5c82-492a-a629-8aa7d14bc25a_source-aspect-ratio_default_0.jpg",
-    "https://i0.wp.com/valminortv.com/wp-content/uploads/2025/06/2025-06-01-VITRASA-NAVIDAD.jpg?w=1024&ssl=1",
-    "https://static.laregion.es/clip/29341df2-c89c-461f-a1f9-9d462c85c430_16-9-aspect-ratio_1600w_0.webp",
-    "https://img.lavdg.com/sc/jFtQvlxbnEvANOBl8dk8mIlWp_w=/768x/2024/12/19/00121734611881367768659/Foto/V_20240115_164432000.jpg",
-    "https://metropolitano.gal/wp-content/uploads/2020/11/autobus-vitrasa_7225-1.jpg",
-    "https://metropolitano.gal/wp-content/uploads/2025/08/Buses-Vigo-Vitrasa-Solaris.jpg",
-    "https://www.vigoalminuto.com/wp-content/uploads/2024/12/20241219_131934-scaled-1536x860.jpg",
-    "https://vigo360.es/static/images/las-lineas-mas-largas.webp",
-    "https://vigo360.es/static/images/caida-desgracia-c2.webp",
-    "https://vigo360.es/static/images/nuevos-recortes-vitrasa.webp",
-    "https://vigo360.es/static/images/prorroga-vitrasa-ilegal.webp",
-    "https:/vigo360.es/static/images/culpa-bus.webp",
-    "https:/vigo360.es/static/images/crisis-vitrasa.webp",
-    "https:/vigo360.es/static/images/nueva-linea-a-queja-bng.webp",
-    "https:/vigo360.es/static/images/el-ultimo-viaje-del-8.webp",
-    "https:/vigo360.es/static/images/porque-no-transporte-publico.webp",
-    "https:/vigo360.es/static/images/corte-puerta-del-sol.webp",
-    "https:/vigo360.es/static/images/bajada-sueldo-empleados-vitrasa.webp",
-    "https:/vigo360.es/static/images/bajada-sueldo-vitraseros.webp",
-    "https:/vigo360.es/static/images/45-minutos-siguen-siendo-poco.webp",
-    "https:/vigo360.es/static/images/tarjetas-transporte-digitales.webp"
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/vitrasa_6158.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/vitrasa_5606-350x250.jpg",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/sin-servicio(1)_en-cocheras.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/sin-numero(2)_6836_castelao.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/sin-numero(1)_6810_guixar.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/e02bcfc2-d521-41a9-91bc-4370fe13b179_16-9-aspect-ratio_50p_0.jpg",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/a35feab4-1d91-4c7e-858e-523d055100fa_16-9-aspect-ratio_50p_0.jpg",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/VITRASA-y-B45_en-cocheras.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Servicios-minimos_plaza-espana.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Servicios-minimos_L15A_pizarro.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Servicios-minimos_C1(1)_6156_urzaiz%23principe.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(6).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(3).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(26).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(25).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(24).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(23).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(22).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/Nueva-flota(1).png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L5A(1)_6224_plaza-compostela.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L4A_servicios-minimos_y-18B-tapado.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L27(2)_pizarro.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L15C_6239_samil.png",
+    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/L15A(1)_pizarro.png"
     
   ];
 }
@@ -240,7 +240,7 @@ function eventoVictoria(){
     // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
     // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
     try {
-      const next = "file:///home/usuario/AMP/GAME%20GM/.vitrasamemory/levels/level-17.html";
+      const next = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-17.html";
       window.location.href = next;
     } catch(e) {
       console.error('Redirección fallida', e);
