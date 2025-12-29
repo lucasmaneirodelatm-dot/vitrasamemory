@@ -38,18 +38,9 @@
 <script>
 /* ---------------------------
    CONFIG: lista de imágenes
-   Pon aquí las URLs completas (una por línea)
    --------------------------- */
-let imagenesBase = [
-  // Si quieres usar tus imágenes pégalas aquí. Ejemplos:
-  // "https://vigo360.es/static/images/45-minutos-siguen-siendo-poco.webp",
-  // "https://vigo360.es/static/images/vitrasa-que-lle-den-polo-cu.webp",
-  // "https://vigo360.es/static/images/vitrasa-lozano-ruinosa.webp"
-];
+let imagenesBase = [];
 
-// ---------------------------
-// Seguridad: si está vacío, usar fallback de prueba
-// ---------------------------
 if (!Array.isArray(imagenesBase)) imagenesBase = [];
 if (imagenesBase.length === 0) {
   imagenesBase = [
@@ -60,18 +51,19 @@ if (imagenesBase.length === 0) {
 }
 
 // ---------------------------
-// CÁLCULO: dividir entre 0.5 -> x2 -> tomar 1/3
+// CÁLCULO (MISMA LÓGICA, PERO ALEATORIA)
 // ---------------------------
 function calcularImagenes(imagenes){
   const multiplicado = imagenes.length / 0.5; // *2
   const tercio = Math.floor(multiplicado / 3);
   const cantidad = Math.max(1, tercio);
-  // Si la lista es más corta que cantidad, devolvemos la lista completa
-  return imagenes.slice(0, Math.min(cantidad, imagenes.length));
+  return [...imagenes]
+    .sort(()=>Math.random()-0.5)
+    .slice(0, Math.min(cantidad, imagenes.length));
 }
 
 // ---------------------------
-// Loader (simulado) con protección de errores
+// Loader
 // ---------------------------
 let progreso = 0;
 let intervalo = null;
@@ -85,13 +77,10 @@ function startLoaderAndInit(){
       if(progreso >= 100){
         clearInterval(intervalo);
         document.getElementById('loader').style.display = 'none';
-        // pequeña espera para dejar que el DOM se actualice
         setTimeout(iniciarNivel, 120);
       }
     }, 40);
   } catch(e) {
-    console.error('Error en loader:', e);
-    // asegurar que no quede bloqueado
     clearInterval(intervalo);
     document.getElementById('loader').style.display = 'none';
     iniciarNivel();
@@ -102,36 +91,30 @@ function startLoaderAndInit(){
 // Genera tablero
 // ---------------------------
 function iniciarNivel(){
-  try {
-    const seleccion = calcularImagenes(imagenesBase);
-    // duplicar para pares
-    let baraja = [...seleccion, ...seleccion];
-    // si no hay suficientes elementos (por seguridad)
-    if (!baraja.length) {
-      console.warn('Baraja vacía; usando logo como fallback');
-      baraja = [document.getElementById('logo').src, document.getElementById('logo').src];
-    }
-    // mezclar
-    baraja = baraja.sort(()=>Math.random() - 0.5);
+  const seleccion = calcularImagenes(imagenesBase);
+  let baraja = [...seleccion, ...seleccion];
 
-    const tablero = document.getElementById('tablero');
-    tablero.innerHTML = '';
-
-    baraja.forEach(ruta => {
-      const carta = document.createElement('div');
-      carta.className = 'carta';
-      carta.innerHTML = `<span aria-hidden="true">?</span><img src="${ruta}" alt="Carta">`;
-      carta.addEventListener('click', ()=>voltear(carta));
-      tablero.appendChild(carta);
-    });
-  } catch(err) {
-    console.error('Error iniciando nivel:', err);
-    showTempMessage('Error iniciando nivel. Mira la consola.', '#d9534f');
+  if (!baraja.length) {
+    const fallback = document.getElementById('logo').src;
+    baraja = [fallback, fallback];
   }
+
+  baraja.sort(()=>Math.random()-0.5);
+
+  const tablero = document.getElementById('tablero');
+  tablero.innerHTML = '';
+
+  baraja.forEach(ruta => {
+    const carta = document.createElement('div');
+    carta.className = 'carta';
+    carta.innerHTML = `<span>?</span><img src="${ruta}" alt="Carta">`;
+    carta.addEventListener('click', ()=>voltear(carta));
+    tablero.appendChild(carta);
+  });
 }
 
 // ---------------------------
-// Lógica de volteo y control de pares
+// Lógica de juego
 // ---------------------------
 let primera = null;
 
@@ -144,55 +127,40 @@ function voltear(carta){
     return;
   }
 
-  const img1 = primera.querySelector('img')?.src || '';
-  const img2 = carta.querySelector('img')?.src || '';
+  const img1 = primera.querySelector('img').src;
+  const img2 = carta.querySelector('img').src;
 
   if(img1 === img2){
-    // acierto
     eventoAcierto();
     primera = null;
 
-    // comprobar victoria
-    const totalVolteadas = document.querySelectorAll('.carta.flipped').length;
-    const totalCartas = document.querySelectorAll('.carta').length;
-    if(totalVolteadas === totalCartas){
+    if(document.querySelectorAll('.carta.flipped').length === document.querySelectorAll('.carta').length){
       setTimeout(eventoVictoria, 400);
     }
   } else {
-    // fallo -> girar tras un pequeño delay
     setTimeout(()=>{
-      try {
-        primera.classList.remove('flipped');
-        carta.classList.remove('flipped');
-      } catch(e) { console.warn('Error al girar cartas:', e); }
+      primera.classList.remove('flipped');
+      carta.classList.remove('flipped');
       primera = null;
     }, 600);
   }
 }
 
-// ---------------------------
-// Mensaje temporal (acierto / errores)
-// ---------------------------
 function showTempMessage(text, bg='#00cc00', ms=800){
   const aviso = document.createElement('div');
   aviso.className = 'msg-temp';
   aviso.textContent = text;
   aviso.style.background = bg;
-  aviso.style.color = '#fff';
-  aviso.style.padding = '8px 14px';
-  aviso.style.borderRadius = '8px';
-  aviso.style.zIndex = 99999;
   document.body.appendChild(aviso);
-  setTimeout(()=>{ aviso.style.opacity = '0'; setTimeout(()=>aviso.remove(), 400); }, ms);
+  setTimeout(()=>{ aviso.remove(); }, ms);
 }
 
-// evento acierto
 function eventoAcierto(){
   showTempMessage('¡Acierto!', '#007f3f', 700);
 }
 
 // ---------------------------
-// Evento victoria: modal y redirección segura
+// Victoria
 // ---------------------------
 function eventoVictoria(){
   const overlay = document.createElement('div');
@@ -205,29 +173,16 @@ function eventoVictoria(){
   overlay.style.zIndex = '100000';
   overlay.innerHTML = `
     <div style="text-align:center;color:white;">
-      <p style="font-size:28px;margin:0 0 18px 0">¡Enhorabuena! ¡Nivel completado!</p>
-      <div>
-        <button id="continuarBtn" style="font-size:18px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Continuar</button>
-      </div>
-    </div>
-  `;
+      <p style="font-size:28px">¡Nivel completado!</p>
+      <button id="continuarBtn" style="font-size:18px;padding:10px 16px;border-radius:8px;border:none">Continuar</button>
+    </div>`;
   document.body.appendChild(overlay);
 
-  document.getElementById('continuarBtn').addEventListener('click', ()=>{
-    // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
-    // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
-    try {
-      const next = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-2.html";
-      window.location.href = next;
-    } catch(e) {
-      console.error('Redirección fallida', e);
-      showTempMessage('No se pudo cambiar de nivel', '#d9534f', 1200);
-    }
-  });
+  document.getElementById('continuarBtn').onclick = ()=>{
+    window.location.href = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-2.html";
+  };
 }
 
-// ---------------------------
-// Iniciar loader + nivel
 // ---------------------------
 startLoaderAndInit();
 </script>
