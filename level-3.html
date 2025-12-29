@@ -22,217 +22,90 @@
 </head>
 <body>
 
-<!-- Loader -->
-<div id="loader" aria-hidden="false">
+<div id="loader">
   <img src="https://vitrasa.es/documents/752794/2317260/LoaderAvanza.gif" alt="Cargando..." />
   <div id="progress"><div id="progress-fill"></div></div>
 </div>
 
-<!-- Logo -->
 <img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
 <h1>Nivel 3</h1>
 <p>Levanta dos parejas</p>
 
-<div id="tablero" aria-live="polite"></div>
+<div id="tablero"></div>
 
 <script>
-/* ---------------------------
-   CONFIG: lista de imágenes
-   Pon aquí las URLs completas (una por línea)
-   --------------------------- */
 let imagenesBase = [
-  // Si quieres usar tus imágenes pégalas aquí. Ejemplos:
-  // "https://vigo360.es/static/images/45-minutos-siguen-siendo-poco.webp",
-  // "https://vigo360.es/static/images/vitrasa-que-lle-den-polo-cu.webp",
-  // "https://vigo360.es/static/images/vitrasa-lozano-ruinosa.webp"
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/V12A2727.webp",
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/V_20241028_170708000.webp",
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/busnadal.webp",
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/frecuencias-dinamicas-vitrasa.webp",
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/huelga-mayo-23.webp",
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/los-recortes-lineas-vitrasa.webp"
 ];
 
-// ---------------------------
-// Seguridad: si está vacío, usar fallback de prueba
-// ---------------------------
-if (!Array.isArray(imagenesBase)) imagenesBase = [];
-if (imagenesBase.length === 0) {
-  imagenesBase = [
-    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/V12A2727.webp",
-    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/V_20241028_170708000.webp",
-    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/busnadal.webp",
-    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/frecuencias-dinamicas-vitrasa.webp",
-    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/huelga-mayo-23.webp",
-    "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/los-recortes-lineas-vitrasa.webp"
-  ];
-}
-
-// ---------------------------
-// CÁLCULO: dividir entre 0.5 -> x2 -> tomar 1/3
-// ---------------------------
+// 🔧 ARREGLADO: selección aleatoria real
 function calcularImagenes(imagenes){
-  const multiplicado = imagenes.length / 0.5; // *2
+  const multiplicado = imagenes.length / 0.5;
   const tercio = Math.floor(multiplicado / 3);
   const cantidad = Math.max(1, tercio);
-  // Si la lista es más corta que cantidad, devolvemos la lista completa
-  return imagenes.slice(0, Math.min(cantidad, imagenes.length));
+  return [...imagenes]
+    .sort(()=>Math.random()-0.5)
+    .slice(0, Math.min(cantidad, imagenes.length));
 }
 
-// ---------------------------
-// Loader (simulado) con protección de errores
-// ---------------------------
+// Loader
 let progreso = 0;
-let intervalo = null;
-
-function startLoaderAndInit(){
-  try {
-    const fillEl = document.getElementById('progress-fill');
-    intervalo = setInterval(()=>{
-      progreso = Math.min(100, progreso + 4);
-      fillEl.style.width = progreso + '%';
-      if(progreso >= 100){
-        clearInterval(intervalo);
-        document.getElementById('loader').style.display = 'none';
-        // pequeña espera para dejar que el DOM se actualice
-        setTimeout(iniciarNivel, 120);
-      }
-    }, 40);
-  } catch(e) {
-    console.error('Error en loader:', e);
-    // asegurar que no quede bloqueado
+const intervalo = setInterval(()=>{
+  progreso += 4;
+  document.getElementById('progress-fill').style.width = progreso + '%';
+  if(progreso >= 100){
     clearInterval(intervalo);
     document.getElementById('loader').style.display = 'none';
     iniciarNivel();
   }
-}
+}, 40);
 
-// ---------------------------
-// Genera tablero
-// ---------------------------
+// Tablero
 function iniciarNivel(){
-  try {
-    const seleccion = calcularImagenes(imagenesBase);
-    // duplicar para pares
-    let baraja = [...seleccion, ...seleccion];
-    // si no hay suficientes elementos (por seguridad)
-    if (!baraja.length) {
-      console.warn('Baraja vacía; usando logo como fallback');
-      baraja = [document.getElementById('logo').src, document.getElementById('logo').src];
-    }
-    // mezclar
-    baraja = baraja.sort(()=>Math.random() - 0.5);
+  const seleccion = calcularImagenes(imagenesBase);
+  let baraja = [...seleccion, ...seleccion].sort(()=>Math.random()-0.5);
 
-    const tablero = document.getElementById('tablero');
-    tablero.innerHTML = '';
+  const tablero = document.getElementById('tablero');
+  tablero.innerHTML = '';
 
-    baraja.forEach(ruta => {
-      const carta = document.createElement('div');
-      carta.className = 'carta';
-      carta.innerHTML = `<span aria-hidden="true">?</span><img src="${ruta}" alt="Carta">`;
-      carta.addEventListener('click', ()=>voltear(carta));
-      tablero.appendChild(carta);
-    });
-  } catch(err) {
-    console.error('Error iniciando nivel:', err);
-    showTempMessage('Error iniciando nivel. Mira la consola.', '#d9534f');
-  }
+  baraja.forEach(img=>{
+    const carta = document.createElement('div');
+    carta.className = 'carta';
+    carta.innerHTML = `<span>?</span><img src="${img}">`;
+    carta.onclick = ()=>voltear(carta);
+    tablero.appendChild(carta);
+  });
 }
 
-// ---------------------------
-// Lógica de volteo y control de pares
-// ---------------------------
 let primera = null;
 
 function voltear(carta){
   if(carta.classList.contains('flipped')) return;
   carta.classList.add('flipped');
 
-  if(!primera){
-    primera = carta;
-    return;
-  }
+  if(!primera){ primera = carta; return; }
 
-  const img1 = primera.querySelector('img')?.src || '';
-  const img2 = carta.querySelector('img')?.src || '';
+  const a = primera.querySelector('img').src;
+  const b = carta.querySelector('img').src;
 
-  if(img1 === img2){
-    // acierto
-    eventoAcierto();
+  if(a === b){
     primera = null;
-
-    // comprobar victoria
-    const totalVolteadas = document.querySelectorAll('.carta.flipped').length;
-    const totalCartas = document.querySelectorAll('.carta').length;
-    if(totalVolteadas === totalCartas){
-      setTimeout(eventoVictoria, 400);
+    if(document.querySelectorAll('.carta.flipped').length === document.querySelectorAll('.carta').length){
+      setTimeout(()=>location.href="https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-4.html",500);
     }
   } else {
-    // fallo -> girar tras un pequeño delay
     setTimeout(()=>{
-      try {
-        primera.classList.remove('flipped');
-        carta.classList.remove('flipped');
-      } catch(e) { console.warn('Error al girar cartas:', e); }
+      primera.classList.remove('flipped');
+      carta.classList.remove('flipped');
       primera = null;
-    }, 600);
+    },600);
   }
 }
-
-// ---------------------------
-// Mensaje temporal (acierto / errores)
-// ---------------------------
-function showTempMessage(text, bg='#00cc00', ms=800){
-  const aviso = document.createElement('div');
-  aviso.className = 'msg-temp';
-  aviso.textContent = text;
-  aviso.style.background = bg;
-  aviso.style.color = '#fff';
-  aviso.style.padding = '8px 14px';
-  aviso.style.borderRadius = '8px';
-  aviso.style.zIndex = 99999;
-  document.body.appendChild(aviso);
-  setTimeout(()=>{ aviso.style.opacity = '0'; setTimeout(()=>aviso.remove(), 400); }, ms);
-}
-
-// evento acierto
-function eventoAcierto(){
-  showTempMessage('¡Acierto!', '#007f3f', 700);
-}
-
-// ---------------------------
-// Evento victoria: modal y redirección segura
-// ---------------------------
-function eventoVictoria(){
-  const overlay = document.createElement('div');
-  overlay.style.position = 'fixed';
-  overlay.style.inset = '0';
-  overlay.style.background = 'rgba(0,0,0,0.85)';
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-  overlay.style.zIndex = '100000';
-  overlay.innerHTML = `
-    <div style="text-align:center;color:white;">
-      <p style="font-size:28px;margin:0 0 18px 0">¡Enhorabuena! ¡Nivel completado!</p>
-      <div>
-        <button id="continuarBtn" style="font-size:18px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Continuar</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  document.getElementById('continuarBtn').addEventListener('click', ()=>{
-    // redirigir a siguiente nivel: aquí calculamos siguiente por nombre
-    // Si este fichero es level-0 -> ir a level-1.html; si no, ir a level-2.html fijado
-    try {
-      const next = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-4.html";
-      window.location.href = next;
-    } catch(e) {
-      console.error('Redirección fallida', e);
-      showTempMessage('No se pudo cambiar de nivel', '#d9534f', 1200);
-    }
-  });
-}
-
-// ---------------------------
-// Iniciar loader + nivel
-// ---------------------------
-startLoaderAndInit();
 </script>
 
 </body>
