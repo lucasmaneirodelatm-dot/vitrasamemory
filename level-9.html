@@ -31,11 +31,14 @@
 <!-- Logo -->
 <img id="logo" src="https://intranet.vitrasa.es/img/logo_vitrasa.png" alt="Logo" />
 <h1>Nivel 9</h1>
-<p>Levanta dos parejas</p>
+<p>Levanta todos los pares</p>
 
 <div id="tablero" aria-live="polite"></div>
 
 <script>
+/* ---------------------------
+   CONFIG: lista de imágenes
+   --------------------------- */
 let imagenesBase = [
   "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/0477b49e-66ba-4d95-8e40-3f3e9dca3bf7_16-9-aspect-ratio_1600w_0.webp",
   "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/0e36381b-d1eb-445c-92c8-fa40f4a82983_16-9-aspect-ratio_50p_0.jpg",
@@ -44,15 +47,21 @@ let imagenesBase = [
   "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/5dc9ab86-117f-4d1e-b2e0-fa0b27f0af30_16-9-aspect-ratio_50p_0.jpg",
   "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/753c21c5-199c-4855-b0d1-e080674a9184_16-9-aspect-ratio_50p_1210453.jpg",
   "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/76b09857-a924-4920-948f-52184523bcef_16-9-aspect-ratio_50p_0.jpg",
-  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/9315785a-f355-437f-9a44-ff4f7d508535_16-9-aspect-ratio_1600w_0.webp"
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/9315785a-f355-437f-9a44-ff4f7d508535_16-9-aspect-ratio_1600w_0.webp",
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/94bab8a1-6dae-4f74-9a43-8180bfcf0423_16-9-aspect-ratio_1600w_0.webp",
+  "https://raw.githubusercontent.com/lucasmaneirodelatm-dot/vitrasamemory/refs/heads/main/img/pictures_levels/9dc8613d-60e4-4323-a92f-bea0ade5f255_16-9-aspect-ratio_50p_0.jpg"
 ];
 
+/* ---------------------------
+   CÁLCULO: usar todas las imágenes
+   --------------------------- */
 function calcularImagenes(imagenes){
-  const multiplicado = imagenes.length / 0.5;
-  const tercio = Math.floor(multiplicado / 3);
-  return imagenes.slice(0, Math.min(tercio, imagenes.length));
+  return imagenes.slice(); // copia completa
 }
 
+/* ---------------------------
+   Loader simulado
+   --------------------------- */
 let progreso = 0;
 let intervalo = null;
 
@@ -69,74 +78,103 @@ function startLoaderAndInit(){
   }, 40);
 }
 
+/* ---------------------------
+   Genera tablero
+   --------------------------- */
+let primera = null;
+
 function iniciarNivel(){
   const seleccion = calcularImagenes(imagenesBase);
-  let baraja = [...seleccion, ...seleccion];
-  if (!baraja.length) baraja = [document.getElementById('logo').src, document.getElementById('logo').src];
-  baraja = baraja.sort(()=>Math.random()-0.5);
+  let baraja = [...seleccion, ...seleccion]; // duplicar para pares
+  baraja = baraja.sort(()=>Math.random() - 0.5); // mezclar
+
   const tablero = document.getElementById('tablero');
   tablero.innerHTML = '';
-  baraja.forEach(ruta=>{
+
+  baraja.forEach(ruta => {
     const carta = document.createElement('div');
-    carta.className='carta';
-    carta.innerHTML=`<span aria-hidden="true">?</span><img src="${ruta}" alt="Carta">`;
-    carta.addEventListener('click',()=>voltear(carta));
+    carta.className = 'carta';
+    carta.innerHTML = `<span aria-hidden="true">?</span><img src="${ruta}" alt="Carta">`;
+    carta.addEventListener('click', ()=>voltear(carta));
     tablero.appendChild(carta);
   });
 }
 
-let primera=null;
+/* ---------------------------
+   Lógica de volteo y control de pares
+   --------------------------- */
 function voltear(carta){
   if(carta.classList.contains('flipped')) return;
   carta.classList.add('flipped');
-  if(!primera){ primera=carta; return; }
-  const img1 = primera.querySelector('img')?.src||'';
-  const img2 = carta.querySelector('img')?.src||'';
-  if(img1===img2){
+
+  if(!primera){
+    primera = carta;
+    return;
+  }
+
+  const img1 = primera.querySelector('img')?.src || '';
+  const img2 = carta.querySelector('img')?.src || '';
+
+  if(img1 === img2){
     eventoAcierto();
-    primera=null;
-    const totalVolteadas=document.querySelectorAll('.carta.flipped').length;
-    if(totalVolteadas===document.querySelectorAll('.carta').length) setTimeout(eventoVictoria,400);
+    primera = null;
+    if(document.querySelectorAll('.carta.flipped').length === document.querySelectorAll('.carta').length){
+      setTimeout(eventoVictoria, 400);
+    }
   } else {
     setTimeout(()=>{
       primera.classList.remove('flipped');
       carta.classList.remove('flipped');
-      primera=null;
-    },600);
+      primera = null;
+    }, 600);
   }
 }
 
-function showTempMessage(text,bg='#00cc00',ms=800){
-  const aviso=document.createElement('div');
-  aviso.className='msg-temp';
-  aviso.textContent=text;
-  aviso.style.background=bg;
+/* ---------------------------
+   Mensaje temporal
+   --------------------------- */
+function showTempMessage(text, bg='#00cc00', ms=800){
+  const aviso = document.createElement('div');
+  aviso.className = 'msg-temp';
+  aviso.textContent = text;
+  aviso.style.background = bg;
   document.body.appendChild(aviso);
-  setTimeout(()=>{ aviso.style.opacity='0'; setTimeout(()=>aviso.remove(),400); },ms);
+  setTimeout(()=>{ aviso.style.opacity = '0'; setTimeout(()=>aviso.remove(), 400); }, ms);
 }
 
-function eventoAcierto(){ showTempMessage('¡Acierto!','#007f3f',700); }
+function eventoAcierto(){
+  showTempMessage('¡Acierto!', '#007f3f', 700);
+}
 
+/* ---------------------------
+   Victoria
+   --------------------------- */
 function eventoVictoria(){
-  const overlay=document.createElement('div');
-  overlay.style.position='fixed';
-  overlay.style.inset='0';
-  overlay.style.background='rgba(0,0,0,0.85)';
-  overlay.style.display='flex';
-  overlay.style.alignItems='center';
-  overlay.style.justifyContent='center';
-  overlay.style.zIndex='100000';
-  overlay.innerHTML=`
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0,0,0,0.85)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.zIndex = '100000';
+  overlay.innerHTML = `
     <div style="text-align:center;color:white;">
       <p style="font-size:28px;margin:0 0 18px 0">¡Enhorabuena! ¡Nivel completado!</p>
-      <div><button id="continuarBtn" style="font-size:18px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Continuar</button></div>
-    </div>`;
+      <div>
+        <button id="continuarBtn" style="font-size:18px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer">Continuar</button>
+      </div>
+    </div>
+  `;
   document.body.appendChild(overlay);
-  document.getElementById('continuarBtn').addEventListener('click',()=>{
-    window.location.href="https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-10.html";
+  document.getElementById('continuarBtn').addEventListener('click', ()=>{
+    window.location.href = "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/level-10.html";
   });
 }
 
+/* ---------------------------
+   Iniciar loader + nivel
+   --------------------------- */
 startLoaderAndInit();
 </script>
 
