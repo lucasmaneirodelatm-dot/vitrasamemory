@@ -1082,39 +1082,38 @@
             saveGameData();
         }
         
-        // LÍNEAS AUTÉNTICAS DE VITRASA - Ahora dinámicas
-        let busLines = [
-            // LÍNEAS PRINCIPALES
-            { id: 'l1', name: 'L1', type: 'URBANA', class: 'line-l1', fleet: 'HÍBRIDO II', color: '#DC143C' },
-            { id: 'l2', name: 'L2', type: 'URBANA', class: 'line-l2', fleet: 'HÍBRIDO I', color: '#0066CC' },
-            { id: 'l3', name: 'L3', type: 'URBANA', class: 'line-l3', fleet: 'NORMAL', color: '#228B22' },
-            { id: 'l4a', name: 'L4A', type: 'URBANA', class: 'line-l4a', fleet: 'HÍBRIDO II', color: '#FF8C00' },
-            { id: 'l4c', name: 'L4C', type: 'URBANA', class: 'line-l4c', fleet: 'HÍBRIDO II', color: '#FF6347' },
-            { id: 'l5a', name: 'L5A', type: 'URBANA', class: 'line-l5a', fleet: 'NORMAL', color: '#8A2BE2' },
-            { id: 'l5b', name: 'L5B', type: 'URBANA', class: 'line-l5b', fleet: 'NORMAL', color: '#9932CC' },
-            { id: 'l6', name: 'L6', type: 'URBANA', class: 'line-l6', fleet: 'HÍBRIDO III', color: '#20B2AA' },
-            { id: 'l7', name: 'L7', type: 'URBANA', class: 'line-l7', fleet: 'NORMAL', color: '#32CD32' },
-            { id: 'l8', name: 'L8', type: 'URBANA', class: 'line-l8', fleet: 'HÍBRIDO I', color: '#FFD700' },
-            { id: 'l9', name: 'L9', type: 'URBANA', class: 'line-l9', fleet: 'HÍBRIDO II', color: '#00CED1' },
-            { id: 'l10', name: 'L10', type: 'URBANA', class: 'line-l10', fleet: 'NORMAL', color: '#C71585' },
-            { id: 'l11', name: 'L11', type: 'URBANA', class: 'line-l11', fleet: 'HÍBRIDO I', color: '#FF4500' },
-            { id: 'l12', name: 'L12', type: 'URBANA', class: 'line-l12', fleet: 'NORMAL', color: '#8B4513' },
-            { id: 'l13', name: 'L13', type: 'URBANA', class: 'line-l13', fleet: 'HÍBRIDO III', color: '#708090' },
-            { id: 'l14', name: 'L14', type: 'URBANA', class: 'line-l14', fleet: 'NORMAL', color: '#4169E1' },
-            { id: 'l15a', name: 'L15A', type: 'URBANA', class: 'line-l15a', fleet: 'HÍBRIDO I', color: '#6A5ACD' },
-            { id: 'l15b', name: 'L15B', type: 'URBANA', class: 'line-l15b', fleet: 'HÍBRIDO I', color: '#BA55D3' },
-            { id: 'l15c', name: 'L15C', type: 'URBANA', class: 'line-l15c', fleet: 'HÍBRIDO I', color: '#DB7093' },
-            { id: 'l16', name: 'L16', type: 'URBANA', class: 'line-l16', fleet: 'NORMAL', color: '#B22222' },
-            { id: 'l17', name: 'L17', type: 'URBANA', class: 'line-l17', fleet: 'HÍBRIDO II', color: '#D2691E' },
-            { id: 'l18', name: 'L18', type: 'URBANA', class: 'line-l18', fleet: 'NORMAL', color: '#FF7F50' },
-            { id: 'l23', name: 'L23', type: 'URBANA', class: 'line-l23', fleet: 'HÍBRIDO III', color: '#FFA500' },
-            { id: 'l24', name: 'L24', type: 'URBANA', class: 'line-l24', fleet: 'NORMAL', color: '#9ACD32' },
-            { id: 'l25', name: 'L25', type: 'URBANA', class: 'line-l25', fleet: 'HÍBRIDO I', color: '#7CFC00' },
-            { id: 'l27', name: 'L27', type: 'URBANA', class: 'line-l27', fleet: 'NORMAL', color: '#00FF7F' },
-            { id: 'l28', name: 'L28', type: 'URBANA', class: 'line-l28', fleet: 'HÍBRIDO II', color: '#48D1CC' },
-            { id: 'l29', name: 'L29', type: 'URBANA', class: 'line-l29', fleet: 'NORMAL', color: '#00BFFF' },
-            { id: 'l31', name: 'L31', type: 'URBANA', class: 'line-l31', fleet: 'HÍBRIDO III', color: '#1E90FF' }
-        ];
+        // LÍNEAS AUTÉNTICAS DE VITRASA - Ahora dinámicas desde JSON
+
+let busLines = [];
+
+// Cargar líneas desde data.json
+async function cargarLineas() {
+
+    try {
+
+        const response = await fetch(
+            "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/public/data.json"
+        );
+
+        const data = await response.json();
+
+        // Debe existir data.busLines en el JSON
+        busLines = data.busLines;
+
+        console.log("Líneas cargadas:", busLines);
+
+        iniciarSistema(); // tu función principal
+
+    } catch (error) {
+
+        console.error("Error cargando líneas:", error);
+
+    }
+
+}
+
+// Iniciar carga
+cargarLineas();
         
         // Sistema de imágenes personalizadas
         let customImages = JSON.parse(localStorage.getItem('vitrasaCustomImages') || '{}');
