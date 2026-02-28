@@ -1114,6 +1114,33 @@ async function cargarLineas() {
 }
 
 // Iniciar carga
+async function cargarLineas() {
+
+    try {
+
+        const response = await fetch(
+            "https://lucasmaneirodelatm-dot.github.io/vitrasamemory/public/data.json"
+        );
+
+        const data = await response.json();
+
+        busLines = data.busLines || [];
+
+        customImages = data.customImages || {};
+
+        console.log("BusLines:", busLines);
+        console.log("Images:", customImages);
+
+        iniciarSistema();
+
+    } catch (error) {
+
+        console.error("Error:", error);
+
+    }
+
+}
+
 cargarLineas();
         
         // Sistema de imágenes personalizadas
