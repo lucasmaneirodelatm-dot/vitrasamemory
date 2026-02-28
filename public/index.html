@@ -1,1 +1,2411 @@
 ❓️🚌 VITRASA MEMORY
+
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory VITRASA - Líneas Auténticas</title>
+  <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .vitrasa-logo {
+            background: white;
+            color: #e74c3c;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .vitrasa-logo-svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .stat {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .game-board {
+            display: grid;
+            gap: 15px;
+            margin: 0 auto 30px;
+        }
+        
+        .board-2x2 { grid-template-columns: repeat(2, 1fr); max-width: 250px; }
+        .board-3x2 { grid-template-columns: repeat(3, 1fr); max-width: 350px; }
+        .board-4x2 { grid-template-columns: repeat(4, 1fr); max-width: 450px; }
+        .board-4x3 { grid-template-columns: repeat(4, 1fr); max-width: 500px; }
+        .board-4x4 { grid-template-columns: repeat(4, 1fr); max-width: 500px; }
+        .board-epic { 
+            grid-template-columns: repeat(20, 1fr); 
+            max-width: 95vw; 
+            gap: 5px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+        
+        .board-legendary { 
+            grid-template-columns: repeat(25, 1fr); 
+            max-width: 98vw; 
+            gap: 3px;
+            max-height: 75vh;
+            overflow-y: auto;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.2));
+            border-radius: 20px;
+            border: 3px solid rgba(255,215,0,0.5);
+            box-shadow: 0 0 30px rgba(255,215,0,0.3);
+        }
+        
+        .card {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        .board-epic .card {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+        }
+        
+        .board-legendary .card {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card.matched {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-front {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            transform: rotateY(180deg);
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: 3px solid #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-back::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 35px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .card-back::after {
+            content: '🚌';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            z-index: 1;
+        }
+        
+        .bus-pattern {
+            width: 70px;
+            height: 70px;
+            position: relative;
+            border-radius: 10px;
+            border: 2px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .board-epic .bus-pattern {
+            width: 30px;
+            height: 30px;
+            border: 1px solid white;
+        }
+        
+        .board-legendary .bus-pattern {
+            width: 24px;
+            height: 24px;
+            border: 1px solid white;
+        }
+        
+        .vitrasa-logo-card {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.4rem;
+            font-weight: bold;
+            color: #e74c3c;
+            z-index: 10;
+        }
+        
+        .board-epic .vitrasa-logo-card {
+            width: 8px;
+            height: 8px;
+            font-size: 0.25rem;
+            top: 1px;
+            right: 1px;
+        }
+        
+        .board-legendary .vitrasa-logo-card {
+            width: 6px;
+            height: 6px;
+            font-size: 0.2rem;
+            top: 1px;
+            right: 1px;
+        }
+        
+        /* LÍNEAS AUT��NTICAS DE VITRASA - COLORES OFICIALES */
+        .line-l1 { background: #DC143C; color: white; } /* Rojo VITRASA oficial */
+        .line-l2 { background: #0066CC; color: white; } /* Azul intenso */
+        .line-l3 { background: #228B22; color: white; } /* Verde bosque */
+        .line-l4a { background: #FF8C00; color: white; } /* Naranja oscuro */
+        .line-l4c { background: #FF6347; color: white; } /* Tomate */
+        .line-l5a { background: #8A2BE2; color: white; } /* Violeta azul */
+        .line-l5b { background: #9932CC; color: white; } /* Orquídea oscuro */
+        .line-l6 { background: #20B2AA; color: white; } /* Verde mar claro */
+        .line-l7 { background: #32CD32; color: white; } /* Verde lima */
+        .line-l8 { background: #FFD700; color: #333; } /* Dorado */
+        .line-l9 { background: #00CED1; color: white; } /* Turquesa oscuro */
+        .line-l10 { background: #C71585; color: white; } /* Violeta rojo medio */
+        .line-l11 { background: #FF4500; color: white; } /* Rojo naranja */
+        .line-l12 { background: #8B4513; color: white; } /* Marrón silla */
+        .line-l13 { background: #708090; color: white; } /* Gris pizarra */
+        .line-l14 { background: #4169E1; color: white; } /* Azul real */
+        .line-l15a { background: #6A5ACD; color: white; } /* Azul pizarra */
+        .line-l15b { background: #BA55D3; color: white; } /* Orquídea medio */
+        .line-l15c { background: #DB7093; color: white; } /* Rosa pálido violáceo */
+        .line-l16 { background: #B22222; color: white; } /* Ladrillo refractario */
+        .line-l17 { background: #D2691E; color: white; } /* Chocolate */
+        .line-l18 { background: #FF7F50; color: white; } /* Coral */
+        .line-l23 { background: #FFA500; color: white; } /* Naranja */
+        .line-l24 { background: #9ACD32; color: white; } /* Verde amarillo */
+        .line-l25 { background: #7CFC00; color: #333; } /* Verde césped */
+        .line-l27 { background: #00FF7F; color: #333; } /* Verde primavera */
+        .line-l28 { background: #48D1CC; color: white; } /* Turquesa medio */
+        .line-l29 { background: #00BFFF; color: white; } /* Azul cielo profundo */
+        .line-l31 { background: #1E90FF; color: white; } /* Azul Dodger */
+        
+        .bus-number {
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            margin-bottom: 2px;
+        }
+        
+        .board-epic .bus-number {
+            font-size: 0.5rem;
+            margin-bottom: 1px;
+        }
+        
+        .board-legendary .bus-number {
+            font-size: 0.4rem;
+            margin-bottom: 0px;
+        }
+        
+        .bus-type {
+            color: white;
+            font-size: 0.45rem;
+            font-weight: bold;
+            background: rgba(0,0,0,0.3);
+            padding: 1px 3px;
+            border-radius: 3px;
+            margin-bottom: 1px;
+        }
+        
+        .board-epic .bus-type,
+        .board-legendary .bus-type {
+            font-size: 0.25rem;
+            padding: 0.5px 1px;
+        }
+        
+        .bus-fleet {
+            color: white;
+            font-size: 0.35rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 1px 2px;
+            border-radius: 2px;
+            text-align: center;
+        }
+        
+        .board-epic .bus-fleet,
+        .board-legendary .bus-fleet {
+            font-size: 0.2rem;
+            padding: 0.5px 1px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .btn-disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+        
+        .victory-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .victory-message h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .victory-message p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        /* Sistema de Perfiles */
+        .profile-selector {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 800px;
+        }
+        
+        .profile-selector h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        
+        .profiles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .profiles-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        
+        .profile-card.active {
+            border-color: #2ed573;
+            background: linear-gradient(135deg, #2ed573, #20bf6b);
+            color: white;
+        }
+        
+        .profile-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .profile-card p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .profile-actions input {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+        
+        .profile-actions input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .level-selector {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 800px;
+        }
+        
+        .level-selector h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        
+        .game-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .current-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .quick-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .level-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        
+        .btn-nav {
+            background: rgba(255,255,255,0.2);
+            color: #333;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-nav:hover:not(:disabled) {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        #pageInfo {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .level-option {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+        }
+        
+        .level-option:hover:not(.locked) {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        
+        .level-option.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+        
+        .level-option.completed {
+            border-color: #2ed573;
+            background: linear-gradient(135deg, #2ed573, #20bf6b);
+            color: white;
+        }
+        
+        .level-option h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.3rem;
+        }
+        
+        .level-option p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .level-badge {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .selector-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .selector-actions .btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        .game-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .game-header h2 {
+            color: white;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .btn-back {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        /* Modales */
+        .stats-modal, .records-modal, .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .empty-state p {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        /* Estilos del Panel de Administración */
+        .admin-content {
+            max-width: 900px;
+            max-height: 90vh;
+            width: 90vw;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .admin-tab {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .admin-tab:hover {
+            color: #667eea;
+        }
+        
+        .admin-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .form-row input, .form-row select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .form-row input:focus, .form-row select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .lines-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .line-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .line-preview {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .line-color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .line-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .line-info h4 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        .line-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .line-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .images-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .image-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .image-item h4 {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+        }
+        
+        .custom-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .bus-pattern {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .board-2x2 { max-width: 200px; }
+            .board-3x2 { max-width: 280px; }
+            .board-4x2 { max-width: 360px; }
+            .board-4x3 { max-width: 360px; }
+            .board-4x4 { max-width: 360px; }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="header">
+   <div class="vitrasa-logo">
+    <svg class="vitrasa-logo-svg" viewbox="0 0 24 24" fill="currentColor"><path d="M18,11H6V6H18M16.5,17A1.5,1.5 0 0,1 15,15.5A1.5,1.5 0 0,1 16.5,14A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 16.5,17M7.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,14A1.5,1.5 0 0,1 9,15.5A1.5,1.5 0 0,1 7.5,17M4,16C4,16.88 4.39,17.67 5,18.22V20A1,1 0 0,0 6,21H7A1,1 0 0,0 8,20V19H16V20A1,1 0 0,0 17,21H18A1,1 0 0,0 19,20V18.22C19.61,17.67 20,16.88 20,16V6C20,2.5 16.42,2 12,2C7.58,2 4,2.5 4,6V16Z" />
+    </svg> VITRASA
+   </div>
+   <h1>🚌 Memory de Buses de Vigo</h1>
+   <p id="linesCount" style="color: white; margin-bottom: 20px;">Con las 29 líneas auténticas de VITRASA</p>
+  </div><!-- Sistema de Perfiles -->
+  <div class="profile-selector" id="profileSelector">
+   <h2>🎮 Selecciona tu Perfil</h2>
+   <div class="profiles-container">
+    <div class="profiles-list" id="profilesList"><!-- Los perfiles se mostrarán aquí -->
+    </div>
+    <div class="profile-actions"><input type="text" id="newProfileName" placeholder="Nombre del nuevo perfil" maxlength="20"> <button class="btn btn-primary" onclick="createProfile()">Crear Perfil</button> <button class="btn btn-primary" onclick="adminLogin()">🔐 Acceso Admin</button>
+    </div>
+   </div>
+  </div>
+  <div class="level-selector" id="levelSelector" style="display: none;">
+   <div class="game-header-info">
+    <div class="current-profile"><span>👤 <span id="currentProfileName">Perfil</span></span> <button class="btn btn-nav" onclick="showProfileSelector()">Cambiar Perfil</button> <button class="btn btn-nav" id="adminBtn" onclick="showAdminPanel()" style="display: none;">⚙️ Admin</button>
+    </div>
+    <div class="quick-stats"><span>🏆 <span id="quickCompletedLevels">0</span> completados</span> <span>⏱️ <span id="quickTotalTime">0:00</span> jugados</span>
+    </div>
+   </div>
+   <h2>Selecciona un Nivel (1-60) 🏆</h2>
+   <div class="level-navigation"><button class="btn btn-nav" id="prevPage" onclick="changePage(-1)" disabled>← Anterior</button> <span id="pageInfo">Página 1 de 10</span> <button class="btn btn-nav" id="nextPage" onclick="changePage(1)">Siguiente →</button>
+   </div>
+   <div class="levels-grid" id="levelsGrid"><!-- Los niveles se generarán dinámicamente -->
+   </div><!-- Botones adicionales -->
+   <div class="selector-actions"><button class="btn btn-primary" onclick="showStats()">📊 Ver Estadísticas</button> <button class="btn btn-primary" onclick="showRecords()">🏆 Récords</button> <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importProgress(event)"> <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📁 Importar Progreso</button>
+   </div>
+  </div>
+  <div class="game-container" id="gameContainer" style="display: none;">
+   <div class="game-header"><button class="btn btn-back" onclick="backToSelector()">← Volver a Niveles</button>
+    <h2 id="currentLevel">Nivel 1</h2>
+    <div class="stats">
+     <div class="stat">
+      ⏱️ <span id="timer">0:00</span>
+     </div>
+     <div class="stat">
+      �� <span id="moves">0</span>
+     </div>
+     <div class="stat">
+      ✨ <span id="pairs">0/2</span>
+     </div>
+    </div>
+   </div>
+   <div class="game-board" id="gameBoard"></div>
+   <div class="controls"><button class="btn btn-primary" onclick="startNewGame()">🎮 Reintentar Nivel</button>
+   </div>
+  </div>
+  <div class="victory-message" id="victoryMessage">
+   <h2>🎉 ¡Nivel Completado!</h2>
+   <p id="levelCompleteText">Has completado el nivel</p>
+   <p id="finalStats"></p>
+   <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;"><button class="btn btn-primary" onclick="startNewGame()">Reintentar</button> <button class="btn btn-primary" id="nextLevelBtn" onclick="nextLevel()" style="display: none;">Siguiente Nivel</button>
+   </div>
+  </div><!-- Modal de Estadísticas -->
+  <div class="stats-modal" id="statsModal">
+   <div class="modal-content"><button class="modal-close" onclick="closeStats()">×</button>
+    <h2>📊 Estadísticas Detalladas</h2>
+    <div class="stats-grid" id="statsContent"></div>
+   </div>
+  </div><!-- Modal de Récords -->
+  <div class="records-modal" id="recordsModal">
+   <div class="modal-content"><button class="modal-close" onclick="closeRecords()">×</button>
+    <h2>��� Tabla de Récords</h2>
+    <div id="recordsContent"></div>
+   </div>
+  </div><!-- Panel de Administración -->
+  <div class="admin-modal" id="adminModal">
+   <div class="modal-content admin-content"><button class="modal-close" onclick="closeAdminPanel()">×</button>
+    <h2>⚙️ Panel de Administración</h2>
+    <div class="admin-tabs"><button class="admin-tab active" onclick="showAdminTab('cards')">🚌 Gestión de Líneas</button> <button class="admin-tab" onclick="showAdminTab('images')">🖼️ Imágenes Personalizadas</button> <button class="admin-tab" onclick="showAdminTab('levels')">🎮 Editar Niveles</button> <button class="admin-tab" onclick="showAdminTab('export')">💾 Exportar/Importar</button>
+    </div><!-- Gestión de Tarjetas -->
+    <div class="admin-tab-content" id="adminTabCards">
+     <h3>Gestión de Líneas de Bus</h3>
+     <div class="admin-form">
+      <div class="form-row"><input type="text" id="lineId" placeholder="ID (ej: l30)" maxlength="10"> <input type="text" id="lineName" placeholder="Nombre (ej: L30)" maxlength="10"> <select id="lineType"> <option value="URBANA">URBANA</option> <option value="INTERURBANA">INTERURBANA</option> <option value="NOCTURNA">NOCTURNA</option> </select>
+      </div>
+      <div class="form-row"><input type="text" id="lineFleet" placeholder="Flota (ej: HÍBRIDO I)" maxlength="20"> <input type="color" id="lineColor" value="#DC143C"> <button class="btn btn-primary" onclick="addBusLine()">Añadir Línea</button>
+      </div>
+     </div>
+     <div class="lines-list" id="linesList"><!-- Lista de líneas existentes -->
+     </div>
+    </div><!-- Gestión de Imágenes -->
+    <div class="admin-tab-content" id="adminTabImages" style="display: none;">
+     <h3>Gestión de Imágenes Personalizadas</h3>
+     <div class="admin-form">
+      <div class="form-row"><select id="imageLineSelect"> <option value="">Seleccionar línea...</option> </select> <input type="file" id="imageUpload" accept="image/*"> <button class="btn btn-primary" onclick="uploadImage()">Subir Imagen</button>
+      </div>
+     </div>
+     <div class="images-gallery" id="imagesGallery"><!-- Galería de imágenes -->
+     </div>
+    </div><!-- Edición de Niveles -->
+    <div class="admin-tab-content" id="adminTabLevels" style="display: none;">
+     <h3>Configuración de Niveles</h3>
+     <div class="admin-form">
+      <div class="form-row"><select id="editLevelSelect" onchange="loadLevelForEdit()"> <option value="">Seleccionar nivel...</option> </select> <input type="number" id="editPairsCount" placeholder="Número de pares" min="2" max="145"> <button class="btn btn-primary" onclick="updateLevelPairs()">Actualizar Parejas</button>
+      </div>
+      <div id="levelPreview" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+       <p style="color: #666;">Selecciona un nivel para editar</p>
+      </div>
+     </div>
+     <div style="margin-top: 30px;">
+      <h4>Niveles Personalizados</h4>
+      <div id="customLevelsList" style="max-height: 300px; overflow-y: auto;"><!-- Lista de niveles personalizados -->
+      </div>
+     </div>
+    </div><!-- Exportar/Importar -->
+    <div class="admin-tab-content" id="adminTabExport" style="display: none;">
+     <h3>Exportar/Importar Configuración</h3>
+     <div class="admin-form"><button class="btn btn-primary" onclick="exportConfig()">📤 Exportar Configuración</button> <input type="file" id="configImport" accept=".json" style="display: none;" onchange="importConfig(event)"> <button class="btn btn-primary" onclick="document.getElementById('configImport').click()">📥 Importar Configuración</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let startTime = null;
+        let timerInterval = null;
+        let gameActive = false;
+        let currentLevelNum = 1;
+        let currentProfile = null;
+        
+        // Sistema completo de guardado
+        let gameData = JSON.parse(localStorage.getItem('vitrasaMemoryGame') || '{}');
+        
+        // Inicializar estructura de datos si no existe
+        if (!gameData.profiles) {
+            gameData = {
+                profiles: {},
+                currentProfile: null
+            };
+            saveGameData();
+        }
+        
+        currentProfile = gameData.currentProfile;
+        let completedLevels = currentProfile ? (gameData.profiles[currentProfile]?.completedLevels || []) : [];
+        
+        function saveGameData() {
+            localStorage.setItem('vitrasaMemoryGame', JSON.stringify(gameData));
+        }
+        
+        function getCurrentProfileData() {
+            return gameData.profiles[currentProfile];
+        }
+        
+        function updateProfileData(updates) {
+            Object.assign(gameData.profiles[currentProfile], updates);
+            saveGameData();
+        }
+        
+        // LÍNEAS AUTÉNTICAS DE VITRASA - Ahora dinámicas
+        let busLines = [
+            // LÍNEAS PRINCIPALES
+            { id: 'l1', name: 'L1', type: 'URBANA', class: 'line-l1', fleet: 'HÍBRIDO II', color: '#DC143C' },
+            { id: 'l2', name: 'L2', type: 'URBANA', class: 'line-l2', fleet: 'HÍBRIDO I', color: '#0066CC' },
+            { id: 'l3', name: 'L3', type: 'URBANA', class: 'line-l3', fleet: 'NORMAL', color: '#228B22' },
+            { id: 'l4a', name: 'L4A', type: 'URBANA', class: 'line-l4a', fleet: 'HÍBRIDO II', color: '#FF8C00' },
+            { id: 'l4c', name: 'L4C', type: 'URBANA', class: 'line-l4c', fleet: 'HÍBRIDO II', color: '#FF6347' },
+            { id: 'l5a', name: 'L5A', type: 'URBANA', class: 'line-l5a', fleet: 'NORMAL', color: '#8A2BE2' },
+            { id: 'l5b', name: 'L5B', type: 'URBANA', class: 'line-l5b', fleet: 'NORMAL', color: '#9932CC' },
+            { id: 'l6', name: 'L6', type: 'URBANA', class: 'line-l6', fleet: 'HÍBRIDO III', color: '#20B2AA' },
+            { id: 'l7', name: 'L7', type: 'URBANA', class: 'line-l7', fleet: 'NORMAL', color: '#32CD32' },
+            { id: 'l8', name: 'L8', type: 'URBANA', class: 'line-l8', fleet: 'HÍBRIDO I', color: '#FFD700' },
+            { id: 'l9', name: 'L9', type: 'URBANA', class: 'line-l9', fleet: 'HÍBRIDO II', color: '#00CED1' },
+            { id: 'l10', name: 'L10', type: 'URBANA', class: 'line-l10', fleet: 'NORMAL', color: '#C71585' },
+            { id: 'l11', name: 'L11', type: 'URBANA', class: 'line-l11', fleet: 'HÍBRIDO I', color: '#FF4500' },
+            { id: 'l12', name: 'L12', type: 'URBANA', class: 'line-l12', fleet: 'NORMAL', color: '#8B4513' },
+            { id: 'l13', name: 'L13', type: 'URBANA', class: 'line-l13', fleet: 'HÍBRIDO III', color: '#708090' },
+            { id: 'l14', name: 'L14', type: 'URBANA', class: 'line-l14', fleet: 'NORMAL', color: '#4169E1' },
+            { id: 'l15a', name: 'L15A', type: 'URBANA', class: 'line-l15a', fleet: 'HÍBRIDO I', color: '#6A5ACD' },
+            { id: 'l15b', name: 'L15B', type: 'URBANA', class: 'line-l15b', fleet: 'HÍBRIDO I', color: '#BA55D3' },
+            { id: 'l15c', name: 'L15C', type: 'URBANA', class: 'line-l15c', fleet: 'HÍBRIDO I', color: '#DB7093' },
+            { id: 'l16', name: 'L16', type: 'URBANA', class: 'line-l16', fleet: 'NORMAL', color: '#B22222' },
+            { id: 'l17', name: 'L17', type: 'URBANA', class: 'line-l17', fleet: 'HÍBRIDO II', color: '#D2691E' },
+            { id: 'l18', name: 'L18', type: 'URBANA', class: 'line-l18', fleet: 'NORMAL', color: '#FF7F50' },
+            { id: 'l23', name: 'L23', type: 'URBANA', class: 'line-l23', fleet: 'HÍBRIDO III', color: '#FFA500' },
+            { id: 'l24', name: 'L24', type: 'URBANA', class: 'line-l24', fleet: 'NORMAL', color: '#9ACD32' },
+            { id: 'l25', name: 'L25', type: 'URBANA', class: 'line-l25', fleet: 'HÍBRIDO I', color: '#7CFC00' },
+            { id: 'l27', name: 'L27', type: 'URBANA', class: 'line-l27', fleet: 'NORMAL', color: '#00FF7F' },
+            { id: 'l28', name: 'L28', type: 'URBANA', class: 'line-l28', fleet: 'HÍBRIDO II', color: '#48D1CC' },
+            { id: 'l29', name: 'L29', type: 'URBANA', class: 'line-l29', fleet: 'NORMAL', color: '#00BFFF' },
+            { id: 'l31', name: 'L31', type: 'URBANA', class: 'line-l31', fleet: 'HÍBRIDO III', color: '#1E90FF' }
+        ];
+        
+        // Sistema de imágenes personalizadas
+        let customImages = JSON.parse(localStorage.getItem('vitrasaCustomImages') || '{}');
+        
+        function saveCustomImages() {
+            localStorage.setItem('vitrasaCustomImages', JSON.stringify(customImages));
+        }
+        
+        // Generar configuraciones para 60 niveles con progresión suave hasta 145 pares (29 líneas x 5)
+        const levelConfigs = {};
+        
+        for (let i = 1; i <= 60; i++) {
+            let pairs, patterns, boardClass, name;
+            
+            // Progresi��n suave: 2 pares en nivel 1, 145 pares en nivel 60
+            // Fórmula: pairs = 2 + (i-1) * (145-2) / (60-1)
+            pairs = Math.round(2 + (i - 1) * (145 - 2) / (60 - 1));
+            
+            // Crear patrones suficientes para el número de pares
+            patterns = [];
+            for (let j = 0; j < pairs; j++) {
+                patterns.push(busLines[j % busLines.length]);
+            }
+            
+            // Determinar clase del tablero según número de pares
+            if (pairs <= 2) {
+                boardClass = 'board-2x2';
+            } else if (pairs <= 3) {
+                boardClass = 'board-3x2';
+            } else if (pairs <= 4) {
+                boardClass = 'board-4x2';
+            } else if (pairs <= 6) {
+                boardClass = 'board-4x3';
+            } else if (pairs <= 8) {
+                boardClass = 'board-4x4';
+            } else if (pairs <= 50) {
+                boardClass = 'board-epic';
+            } else {
+                boardClass = 'board-legendary';
+            }
+            
+            // Determinar nombre según dificultad
+            if (i <= 10) {
+                name = `Nivel ${i} - Principiante (${pairs} pares)`;
+            } else if (i <= 20) {
+                name = `Nivel ${i} - Fácil (${pairs} pares)`;
+            } else if (i <= 30) {
+                name = `Nivel ${i} - Intermedio (${pairs} pares)`;
+            } else if (i <= 40) {
+                name = `Nivel ${i} - Avanzado (${pairs} pares)`;
+            } else if (i <= 50) {
+                name = `Nivel ${i} - Experto (${pairs} pares)`;
+            } else if (i <= 58) {
+                name = `Nivel ${i} - Maestro (${pairs} pares)`;
+            } else if (i === 59) {
+                name = `Nivel ${i} - ÉPICO (${pairs} pares)`;
+            } else {
+                name = `Nivel ${i} - LEGENDARIO (${pairs} pares)`;
+            }
+            
+            levelConfigs[i] = { pairs, patterns, boardClass, name };
+        }
+        
+        function createCard(pattern, index) {
+            return {
+                id: index,
+                pattern: pattern,
+                isFlipped: false,
+                isMatched: false
+            };
+        }
+        
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        // Sistema de Perfiles
+        function renderProfiles() {
+            const profilesList = document.getElementById('profilesList');
+            profilesList.innerHTML = '';
+            
+            const profileNames = Object.keys(gameData.profiles);
+            
+            if (profileNames.length === 0) {
+                profilesList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>¡Bienvenido al Memory VITRASA!</h3>
+                        <p>Crea tu primer perfil para empezar a jugar</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            profileNames.forEach(profileName => {
+                const profile = gameData.profiles[profileName];
+                const profileCard = document.createElement('div');
+                profileCard.className = `profile-card ${profileName === currentProfile ? 'active' : ''}`;
+                profileCard.onclick = () => selectProfile(profileName);
+                
+                const completedCount = profile.completedLevels.length;
+                const totalTime = formatTime(profile.totalPlayTime || 0);
+                
+                profileCard.innerHTML = `
+                    <h3>${profileName}</h3>
+                    <p>🏆 ${completedCount} niveles completados</p>
+                    <p>⏱️ ${totalTime} jugados</p>
+                    <p>🎮 ${profile.gamesPlayed || 0} partidas</p>
+                `;
+                
+                profilesList.appendChild(profileCard);
+            });
+        }
+        
+        function createProfile() {
+            const nameInput = document.getElementById('newProfileName');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                alert('Por favor, introduce un nombre para el perfil');
+                return;
+            }
+            
+            if (gameData.profiles[name]) {
+                alert('Ya existe un perfil con ese nombre');
+                return;
+            }
+            
+            // Detectar si el nombre es "admin" (sin importar mayúsculas/minúsculas)
+            const isAdmin = name.toLowerCase() === 'admin';
+            
+            gameData.profiles[name] = {
+                completedLevels: isAdmin ? Array.from({length: 60}, (_, i) => i + 1) : [], // Si es admin, desbloquear todos los niveles
+                currentLevel: 1,
+                stats: {},
+                records: {},
+                totalPlayTime: 0,
+                gamesPlayed: 0,
+                achievements: [],
+                isAdmin: isAdmin
+            };
+            
+            nameInput.value = '';
+            saveGameData();
+            renderProfiles();
+            
+            if (isAdmin) {
+                alert('✅ Perfil de Administrador creado con todos los niveles desbloqueados.');
+            }
+        }
+        
+        function adminLogin() {
+            const password = prompt('🔐 Introduce la contraseña de administrador:');
+            if (password !== 'vitrasa2024') {
+                alert('❌ Contraseña incorrecta. Acceso denegado.');
+                return;
+            }
+            
+            // Verificar si ya existe un perfil admin
+            let adminProfile = null;
+            for (const [profileName, profile] of Object.entries(gameData.profiles)) {
+                if (profile.isAdmin) {
+                    adminProfile = profileName;
+                    break;
+                }
+            }
+            
+            // Si no existe, crear uno
+            if (!adminProfile) {
+                adminProfile = 'Administrador';
+                let counter = 1;
+                while (gameData.profiles[adminProfile]) {
+                    adminProfile = `Administrador${counter}`;
+                    counter++;
+                }
+                
+                gameData.profiles[adminProfile] = {
+                    completedLevels: Array.from({length: 60}, (_, i) => i + 1),
+                    currentLevel: 1,
+                    stats: {},
+                    records: {},
+                    totalPlayTime: 0,
+                    gamesPlayed: 0,
+                    achievements: [],
+                    isAdmin: true
+                };
+                saveGameData();
+            }
+            
+            // Seleccionar el perfil de administrador
+            currentProfile = adminProfile;
+            gameData.currentProfile = adminProfile;
+            completedLevels = gameData.profiles[currentProfile].completedLevels;
+            saveGameData();
+            
+            // Ocultar selector de perfiles y mostrar selector de niveles
+            document.getElementById('profileSelector').style.display = 'none';
+            document.getElementById('levelSelector').style.display = 'block';
+            
+            // Mostrar botón de admin
+            document.getElementById('adminBtn').style.display = 'inline-block';
+            
+            // Actualizar selector de niveles
+            updateLevelSelector();
+            
+            // Mostrar DIRECTAMENTE el panel de administración sin verificación
+            setTimeout(() => {
+                document.getElementById('adminModal').style.display = 'flex';
+                showAdminTab('cards');
+                renderLinesList();
+                updateImageLineSelect();
+                renderImagesGallery();
+                populateLevelSelect();
+                renderCustomLevelsList();
+            }, 100);
+        }
+        
+        function selectProfile(profileName) {
+            currentProfile = profileName;
+            gameData.currentProfile = profileName;
+            completedLevels = gameData.profiles[currentProfile].completedLevels;
+            saveGameData();
+            
+            document.getElementById('profileSelector').style.display = 'none';
+            document.getElementById('levelSelector').style.display = 'block';
+            updateLevelSelector();
+            
+            // Mostrar botón de admin si es administrador
+            const isAdmin = gameData.profiles[currentProfile]?.isAdmin;
+            document.getElementById('adminBtn').style.display = isAdmin ? 'inline-block' : 'none';
+        }
+        
+        function showProfileSelector() {
+            document.getElementById('levelSelector').style.display = 'none';
+            document.getElementById('profileSelector').style.display = 'block';
+            renderProfiles();
+        }
+        
+        let currentPage = 1;
+        const levelsPerPage = 5;
+        const totalPages = Math.ceil(60 / levelsPerPage);
+        
+        function updateLevelSelector() {
+            document.getElementById('currentProfileName').textContent = currentProfile;
+            document.getElementById('quickCompletedLevels').textContent = completedLevels.length;
+            document.getElementById('quickTotalTime').textContent = formatTime(getCurrentProfileData().totalPlayTime || 0);
+            renderLevelsPage();
+        }
+        
+        function renderLevelsPage() {
+            const grid = document.getElementById('levelsGrid');
+            grid.innerHTML = '';
+            
+            const startLevel = (currentPage - 1) * levelsPerPage + 1;
+            const endLevel = Math.min(startLevel + levelsPerPage - 1, 60);
+            
+            for (let i = startLevel; i <= endLevel; i++) {
+                const levelElement = document.createElement('div');
+                levelElement.className = 'level-option';
+                levelElement.id = `level${i}`;
+                
+                const config = levelConfigs[i];
+                const isUnlocked = i === 1 || completedLevels.includes(i - 1);
+                const isCompleted = completedLevels.includes(i);
+                
+                if (!isUnlocked) {
+                    levelElement.classList.add('locked');
+                } else {
+                    levelElement.onclick = () => selectLevel(i);
+                }
+                
+                if (isCompleted) {
+                    levelElement.classList.add('completed');
+                }
+                
+                let emoji = '🟢';
+                if (i === 60) emoji = '🏆';
+                else if (i === 59) emoji = '💎';
+                else if (i <= 10) emoji = '🟢';
+                else if (i <= 20) emoji = '��';
+                else if (i <= 30) emoji = '🟠';
+                else if (i <= 40) emoji = '🔴';
+                else if (i <= 50) emoji = '🟣';
+                else emoji = '⭐';
+                
+                levelElement.innerHTML = `
+                    <div class="level-badge">${emoji}</div>
+                    <h3>Nivel ${i}</h3>
+                    <p>${config.pairs} pares</p>
+                `;
+                
+                grid.appendChild(levelElement);
+            }
+            
+            document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+        
+        function changePage(direction) {
+            const newPage = currentPage + direction;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderLevelsPage();
+            }
+        }
+        
+        function selectLevel(levelNum) {
+            if (levelNum > 1 && !completedLevels.includes(levelNum - 1)) {
+                return;
+            }
+            
+            currentLevelNum = levelNum;
+            updateProfileData({ currentLevel: levelNum });
+            
+            document.getElementById('levelSelector').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('currentLevel').textContent = levelConfigs[levelNum].name;
+            initializeGame();
+        }
+        
+        function backToSelector() {
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('levelSelector').style.display = 'block';
+            document.getElementById('victoryMessage').style.display = 'none';
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            updateLevelSelector();
+        }
+        
+        function initializeGame() {
+            const config = levelConfigs[currentLevelNum];
+            
+            cards = [];
+            let cardId = 0;
+            
+            config.patterns.forEach(pattern => {
+                cards.push(createCard(pattern, cardId++));
+                cards.push(createCard(pattern, cardId++));
+            });
+            
+            cards = shuffleArray(cards);
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            startTime = null;
+            gameActive = true;
+            
+            // Incrementar contador de partidas
+            const profileData = getCurrentProfileData();
+            updateProfileData({ gamesPlayed: (profileData.gamesPlayed || 0) + 1 });
+            
+            updateStats();
+            renderBoard();
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        }
+        
+        function renderBoard() {
+            const board = document.getElementById('gameBoard');
+            const config = levelConfigs[currentLevelNum];
+            
+            board.className = `game-board ${config.boardClass}`;
+            board.innerHTML = '';
+            
+            cards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''}`;
+                cardElement.onclick = () => flipCard(card.id);
+                
+                // Verificar si hay imagen personalizada
+                const hasCustomImage = customImages[card.pattern.id];
+                
+                if (hasCustomImage) {
+                    cardElement.innerHTML = `
+                        <div class="card-front">
+                            <div class="bus-pattern" style="background: ${card.pattern.color}; padding: 0; overflow: hidden;">
+                                <img src="${customImages[card.pattern.id]}" class="custom-image" alt="${card.pattern.name}">
+                                <div class="vitrasa-logo-card">V</div>
+                            </div>
+                        </div>
+                        <div class="card-back"></div>
+                    `;
+                } else {
+                    cardElement.innerHTML = `
+                        <div class="card-front">
+                            <div class="bus-pattern ${card.pattern.class}" style="background: ${card.pattern.color};">
+                                <div class="vitrasa-logo-card">V</div>
+                                <div class="bus-number">${card.pattern.name}</div>
+                                <div class="bus-type">${card.pattern.type}</div>
+                                <div class="bus-fleet">${card.pattern.fleet}</div>
+                            </div>
+                        </div>
+                        <div class="card-back"></div>
+                    `;
+                }
+                
+                board.appendChild(cardElement);
+            });
+        }
+        
+        function flipCard(cardId) {
+            if (!gameActive) return;
+            
+            const card = cards.find(c => c.id === cardId);
+            if (!card || card.isFlipped || card.isMatched || flippedCards.length >= 2) return;
+            
+            if (!startTime) {
+                startTime = Date.now();
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+            
+            card.isFlipped = true;
+            flippedCards.push(card);
+            
+            renderBoard();
+            
+            if (flippedCards.length === 2) {
+                moves++;
+                updateStats();
+                
+                setTimeout(() => {
+                    checkMatch();
+                }, 1000);
+            }
+        }
+        
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            const config = levelConfigs[currentLevelNum];
+            
+            if (card1.pattern.id === card2.pattern.id) {
+                card1.isMatched = true;
+                card2.isMatched = true;
+                matchedPairs++;
+                
+                if (matchedPairs === config.pairs) {
+                    levelCompleted();
+                }
+            } else {
+                card1.isFlipped = false;
+                card2.isFlipped = false;
+            }
+            
+            flippedCards = [];
+            updateStats();
+            renderBoard();
+        }
+        
+        function updateStats() {
+            const config = levelConfigs[currentLevelNum];
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('pairs').textContent = `${matchedPairs}/${config.pairs}`;
+        }
+        
+        function updateTimer() {
+            if (!startTime) return;
+            
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            if (hours > 0) {
+                return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function levelCompleted() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            
+            // Actualizar progreso
+            if (!completedLevels.includes(currentLevelNum)) {
+                completedLevels.push(currentLevelNum);
+            }
+            
+            // Actualizar estadísticas
+            const profileData = getCurrentProfileData();
+            const levelKey = `level${currentLevelNum}`;
+            
+            if (!profileData.stats[levelKey]) {
+                profileData.stats[levelKey] = { attempts: 0, bestTime: null, bestMoves: null };
+            }
+            
+            profileData.stats[levelKey].attempts++;
+            
+            if (!profileData.stats[levelKey].bestTime || elapsed < profileData.stats[levelKey].bestTime) {
+                profileData.stats[levelKey].bestTime = elapsed;
+            }
+            
+            if (!profileData.stats[levelKey].bestMoves || moves < profileData.stats[levelKey].bestMoves) {
+                profileData.stats[levelKey].bestMoves = moves;
+            }
+            
+            // Actualizar récords globales
+            if (!profileData.records[levelKey] || elapsed < profileData.records[levelKey].time) {
+                profileData.records[levelKey] = { time: elapsed, moves: moves, date: new Date().toISOString() };
+            }
+            
+            updateProfileData({
+                completedLevels: completedLevels,
+                totalPlayTime: (profileData.totalPlayTime || 0) + elapsed,
+                stats: profileData.stats,
+                records: profileData.records
+            });
+            
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('levelCompleteText').textContent = 
+                `¡Has completado el ${levelConfigs[currentLevelNum].name}!`;
+            document.getElementById('finalStats').textContent = 
+                `Tiempo: ${timeStr} | Movimientos: ${moves}`;
+            
+            const nextBtn = document.getElementById('nextLevelBtn');
+            if (currentLevelNum < 60) {
+                nextBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'none';
+                document.getElementById('levelCompleteText').textContent = 
+                    '🏆 ¡LEGENDARIO! ¡Has conquistado todas las líneas auténticas de VITRASA! ¡Eres el MAESTRO SUPREMO del transporte vigués!';
+            }
+            
+            document.getElementById('victoryMessage').style.display = 'block';
+        }
+        
+        function nextLevel() {
+            document.getElementById('victoryMessage').style.display = 'none';
+            if (currentLevelNum < 60) {
+                selectLevel(currentLevelNum + 1);
+            }
+        }
+        
+        function startNewGame() {
+            document.getElementById('victoryMessage').style.display = 'none';
+            initializeGame();
+        }
+        
+        // Estadísticas
+        function showStats() {
+            const profileData = getCurrentProfileData();
+            const statsContent = document.getElementById('statsContent');
+            
+            const totalCompleted = completedLevels.length;
+            const totalTime = formatTime(profileData.totalPlayTime || 0);
+            const totalGames = profileData.gamesPlayed || 0;
+            const avgTime = totalGames > 0 ? formatTime(Math.floor((profileData.totalPlayTime || 0) / totalGames)) : '0:00';
+            
+            statsContent.innerHTML = `
+                <div class="stat-card">
+                    <h3>${totalCompleted}</h3>
+                    <p>Niveles Completados</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${totalTime}</h3>
+                    <p>Tiempo Total Jugado</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${totalGames}</h3>
+                    <p>Partidas Jugadas</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${avgTime}</h3>
+                    <p>Tiempo Promedio</p>
+                </div>
+            `;
+            
+            document.getElementById('statsModal').style.display = 'flex';
+        }
+        
+        function closeStats() {
+            document.getElementById('statsModal').style.display = 'none';
+        }
+        
+        // Récords
+        function showRecords() {
+            const profileData = getCurrentProfileData();
+            const recordsContent = document.getElementById('recordsContent');
+            
+            let recordsHTML = '<h3>🏆 Mejores Tiempos por Nivel</h3>';
+            
+            Object.keys(profileData.records || {}).forEach(levelKey => {
+                const record = profileData.records[levelKey];
+                const levelNum = levelKey.replace('level', '');
+                const time = formatTime(record.time);
+                const date = new Date(record.date).toLocaleDateString();
+                
+                recordsHTML += `
+                    <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                        <span>Nivel ${levelNum}</span>
+                        <span>${time} (${record.moves} movimientos) - ${date}</span>
+                    </div>
+                `;
+            });
+            
+            if (Object.keys(profileData.records || {}).length === 0) {
+                recordsHTML += '<p>¡Aún no tienes récords! Completa algunos niveles para verlos aquí.</p>';
+            }
+            
+            recordsContent.innerHTML = recordsHTML;
+            document.getElementById('recordsModal').style.display = 'flex';
+        }
+        
+        function closeRecords() {
+            document.getElementById('recordsModal').style.display = 'none';
+        }
+        
+        // Importar
+        function importProgress(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (confirm('¿Estás seguro de que quieres importar estos datos? Esto sobrescribirá tu progreso actual.')) {
+                        gameData = importedData;
+                        currentProfile = gameData.currentProfile || Object.keys(gameData.profiles)[0];
+                        completedLevels = gameData.profiles[currentProfile]?.completedLevels || [];
+                        saveGameData();
+                        
+                        alert('¡Progreso importado exitosamente!');
+                        renderProfiles();
+                        if (currentProfile) {
+                            updateLevelSelector();
+                        }
+                    }
+                } catch (error) {
+                    alert('Error al importar el archivo. Asegúrate de que sea un archivo válido.');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Funciones de Administración
+        function showAdminPanel(skipPasswordCheck = false) {
+            if (!gameData.profiles[currentProfile]?.isAdmin) {
+                alert('No tienes permisos de administrador');
+                return;
+            }
+            
+            // Verificar contraseña cada vez que se accede al panel (excepto si viene de adminLogin)
+            if (!skipPasswordCheck) {
+                const password = prompt('🔐 Introduce la contraseña de administrador para acceder al panel:');
+                if (password !== 'vitrasa2024') {
+                    alert('❌ Contraseña incorrecta. Acceso denegado.');
+                    return;
+                }
+            }
+            
+            document.getElementById('adminModal').style.display = 'flex';
+            showAdminTab('cards');
+            renderLinesList();
+            updateImageLineSelect();
+            renderImagesGallery();
+            populateLevelSelect();
+            renderCustomLevelsList();
+        }
+        
+        function closeAdminPanel() {
+            document.getElementById('adminModal').style.display = 'none';
+            
+            // Si el selector de niveles no está visible, mostrarlo
+            if (document.getElementById('levelSelector').style.display === 'none') {
+                document.getElementById('levelSelector').style.display = 'block';
+                updateLevelSelector();
+            }
+        }
+        
+        function showAdminTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.admin-tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remover clase active de todas las pestañas
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar pestaña seleccionada
+            document.getElementById(`adminTab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).style.display = 'block';
+            
+            // Activar pestaña correspondiente
+            const activeTab = Array.from(document.querySelectorAll('.admin-tab')).find(tab => 
+                tab.textContent.includes(tabName === 'cards' ? 'Gestión de Líneas' : 
+                                         tabName === 'images' ? 'Imágenes' : 
+                                         tabName === 'levels' ? 'Editar Niveles' : 'Exportar')
+            );
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+        
+        function addBusLine() {
+            const id = document.getElementById('lineId').value.trim();
+            const name = document.getElementById('lineName').value.trim();
+            const type = document.getElementById('lineType').value;
+            const fleet = document.getElementById('lineFleet').value.trim();
+            const color = document.getElementById('lineColor').value;
+            
+            if (!id || !name || !fleet) {
+                alert('Por favor, completa todos los campos');
+                return;
+            }
+            
+            // Verificar si ya existe
+            if (busLines.find(line => line.id === id)) {
+                alert('Ya existe una línea con ese ID');
+                return;
+            }
+            
+            // Crear clase CSS dinámica
+            const className = `line-${id}`;
+            
+            // Añadir estilo dinámico
+            const style = document.createElement('style');
+            style.textContent = `.${className} { background: ${color}; color: ${color === '#FFD700' || color === '#7CFC00' || color === '#00FF7F' ? '#333' : 'white'}; }`;
+            document.head.appendChild(style);
+            
+            // Añadir línea
+            busLines.push({
+                id: id,
+                name: name,
+                type: type,
+                class: className,
+                fleet: fleet,
+                color: color
+            });
+            
+            // Limpiar formulario
+            document.getElementById('lineId').value = '';
+            document.getElementById('lineName').value = '';
+            document.getElementById('lineFleet').value = '';
+            document.getElementById('lineColor').value = '#DC143C';
+            
+            renderLinesList();
+            updateImageLineSelect();
+            updateLinesCount();
+            alert('Línea añadida correctamente');
+        }
+        
+        function deleteBusLine(lineId) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta línea?')) {
+                busLines = busLines.filter(line => line.id !== lineId);
+                
+                // Eliminar imagen personalizada si existe
+                if (customImages[lineId]) {
+                    delete customImages[lineId];
+                    saveCustomImages();
+                }
+                
+                renderLinesList();
+                updateImageLineSelect();
+                renderImagesGallery();
+                updateLinesCount();
+                alert('Línea eliminada correctamente');
+            }
+        }
+        
+        function updateLinesCount() {
+            const count = busLines.length;
+            const linesCountElement = document.getElementById('linesCount');
+            if (count === 1) {
+                linesCountElement.textContent = `Con 1 línea auténtica de VITRASA`;
+            } else {
+                linesCountElement.textContent = `Con las ${count} líneas auténticas de VITRASA`;
+            }
+        }
+        
+        function renderLinesList() {
+            const linesList = document.getElementById('linesList');
+            linesList.innerHTML = '';
+            
+            busLines.forEach(line => {
+                const lineItem = document.createElement('div');
+                lineItem.className = 'line-item';
+                
+                lineItem.innerHTML = `
+                    <div class="line-preview">
+                        <div class="line-color-preview" style="background: ${line.color}; color: ${line.color === '#FFD700' || line.color === '#7CFC00' || line.color === '#00FF7F' ? '#333' : 'white'};">
+                            ${line.name}
+                        </div>
+                        <div class="line-info">
+                            <h4>${line.name} (${line.id})</h4>
+                            <p>${line.type} - ${line.fleet}</p>
+                        </div>
+                    </div>
+                    <div class="line-actions">
+                        <button class="btn btn-small btn-danger" onclick="deleteBusLine('${line.id}')">Eliminar</button>
+                    </div>
+                `;
+                
+                linesList.appendChild(lineItem);
+            });
+            
+            updateLinesCount();
+        }
+        
+        function updateImageLineSelect() {
+            const select = document.getElementById('imageLineSelect');
+            select.innerHTML = '<option value="">Seleccionar línea...</option>';
+            
+            busLines.forEach(line => {
+                const option = document.createElement('option');
+                option.value = line.id;
+                option.textContent = `${line.name} - ${line.type}`;
+                select.appendChild(option);
+            });
+        }
+        
+        function uploadImage() {
+            const lineId = document.getElementById('imageLineSelect').value;
+            const fileInput = document.getElementById('imageUpload');
+            
+            if (!lineId) {
+                alert('Por favor, selecciona una línea');
+                return;
+            }
+            
+            if (!fileInput.files[0]) {
+                alert('Por favor, selecciona una imagen');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                customImages[lineId] = e.target.result;
+                saveCustomImages();
+                renderImagesGallery();
+                fileInput.value = '';
+                alert('Imagen subida correctamente');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        function deleteImage(lineId) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
+                delete customImages[lineId];
+                saveCustomImages();
+                renderImagesGallery();
+                alert('Imagen eliminada correctamente');
+            }
+        }
+        
+        function renderImagesGallery() {
+            const gallery = document.getElementById('imagesGallery');
+            gallery.innerHTML = '';
+            
+            Object.keys(customImages).forEach(lineId => {
+                const line = busLines.find(l => l.id === lineId);
+                if (!line) return;
+                
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                
+                imageItem.innerHTML = `
+                    <img src="${customImages[lineId]}" class="image-preview" alt="${line.name}">
+                    <h4>${line.name}</h4>
+                    <button class="btn btn-small btn-danger" onclick="deleteImage('${lineId}')">Eliminar</button>
+                `;
+                
+                gallery.appendChild(imageItem);
+            });
+            
+            if (Object.keys(customImages).length === 0) {
+                gallery.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1 / -1;">No hay imágenes personalizadas</p>';
+            }
+        }
+        
+        function exportConfig() {
+            const config = {
+                busLines: busLines,
+                customImages: customImages,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(config, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `vitrasa-config-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+        
+        function importConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    
+                    if (confirm('¿Estás seguro de que quieres importar esta configuración? Esto sobrescribirá las líneas y imágenes actuales.')) {
+                        if (config.busLines) {
+                            busLines = config.busLines;
+                            
+                            // Recrear estilos CSS
+                            busLines.forEach(line => {
+                                if (line.color) {
+                                    const style = document.createElement('style');
+                                    style.textContent = `.${line.class} { background: ${line.color}; color: ${line.color === '#FFD700' || line.color === '#7CFC00' || line.color === '#00FF7F' ? '#333' : 'white'}; }`;
+                                    document.head.appendChild(style);
+                                }
+                            });
+                        }
+                        
+                        if (config.customImages) {
+                            customImages = config.customImages;
+                            saveCustomImages();
+                        }
+                        
+                        renderLinesList();
+                        updateImageLineSelect();
+                        renderImagesGallery();
+                        updateLinesCount();
+                        alert('Configuración importada exitosamente');
+                    }
+                } catch (error) {
+                    alert('Error al importar el archivo. Asegúrate de que sea un archivo válido.');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Funciones de edición de niveles
+        let customLevels = JSON.parse(localStorage.getItem('vitrasaCustomLevels') || '{}');
+        
+        function saveCustomLevels() {
+            localStorage.setItem('vitrasaCustomLevels', JSON.stringify(customLevels));
+        }
+        
+        function populateLevelSelect() {
+            const select = document.getElementById('editLevelSelect');
+            select.innerHTML = '<option value="">Seleccionar nivel...</option>';
+            
+            for (let i = 1; i <= 60; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                const config = customLevels[i] || levelConfigs[i];
+                option.textContent = `Nivel ${i} (${config.pairs} pares)`;
+                select.appendChild(option);
+            }
+        }
+        
+        function loadLevelForEdit() {
+            const levelNum = parseInt(document.getElementById('editLevelSelect').value);
+            if (!levelNum) return;
+            
+            const config = customLevels[levelNum] || levelConfigs[levelNum];
+            document.getElementById('editPairsCount').value = config.pairs;
+            
+            const preview = document.getElementById('levelPreview');
+            preview.innerHTML = `
+                <h4>Vista Previa - Nivel ${levelNum}</h4>
+                <p><strong>Parejas actuales:</strong> ${config.pairs}</p>
+                <p><strong>Clase de tablero:</strong> ${config.boardClass}</p>
+                <p><strong>Total de tarjetas:</strong> ${config.pairs * 2}</p>
+                <p style="margin-top: 10px; color: #666;">
+                    ${config.pairs <= 8 ? '📱 Tablero compacto' : config.pairs <= 50 ? '🖥️ Tablero épico' : '🏆 Tablero legendario'}
+                </p>
+            `;
+        }
+        
+        function updateLevelPairs() {
+            const levelNum = parseInt(document.getElementById('editLevelSelect').value);
+            const pairsInput = document.getElementById('editPairsCount');
+            const newPairs = parseInt(pairsInput.value);
+            
+            if (!levelNum) {
+                alert('Por favor, selecciona un nivel');
+                return;
+            }
+            
+            if (!newPairs || newPairs < 2 || newPairs > 145) {
+                alert('El número de pares debe estar entre 2 y 145');
+                return;
+            }
+            
+            // Determinar la clase del tablero según el número de pares
+            let boardClass;
+            if (newPairs <= 2) boardClass = 'board-2x2';
+            else if (newPairs <= 3) boardClass = 'board-3x2';
+            else if (newPairs <= 4) boardClass = 'board-4x2';
+            else if (newPairs <= 6) boardClass = 'board-4x3';
+            else if (newPairs <= 8) boardClass = 'board-4x4';
+            else if (newPairs <= 50) boardClass = 'board-epic';
+            else boardClass = 'board-legendary';
+            
+            // Crear patrones para las parejas
+            const patterns = [];
+            for (let j = 0; j < newPairs; j++) {
+                patterns.push(busLines[j % busLines.length]);
+            }
+            
+            // Determinar nombre
+            let name;
+            if (levelNum <= 10) name = `Nivel ${levelNum} - Principiante (${newPairs} pares)`;
+            else if (levelNum <= 20) name = `Nivel ${levelNum} - Fácil (${newPairs} pares)`;
+            else if (levelNum <= 30) name = `Nivel ${levelNum} - Intermedio (${newPairs} pares)`;
+            else if (levelNum <= 40) name = `Nivel ${levelNum} - Avanzado (${newPairs} pares)`;
+            else if (levelNum <= 50) name = `Nivel ${levelNum} - Experto (${newPairs} pares)`;
+            else if (levelNum <= 58) name = `Nivel ${levelNum} - Maestro (${newPairs} pares)`;
+            else if (levelNum === 59) name = `Nivel ${levelNum} - ÉPICO (${newPairs} pares)`;
+            else name = `Nivel ${levelNum} - LEGENDARIO (${newPairs} pares)`;
+            
+            // Guardar configuración personalizada
+            customLevels[levelNum] = {
+                pairs: newPairs,
+                patterns: patterns,
+                boardClass: boardClass,
+                name: name
+            };
+            
+            saveCustomLevels();
+            populateLevelSelect();
+            loadLevelForEdit();
+            renderCustomLevelsList();
+            
+            alert(`✅ Nivel ${levelNum} actualizado a ${newPairs} parejas`);
+        }
+        
+        function resetLevel(levelNum) {
+            if (confirm(`¿Restaurar el nivel ${levelNum} a su configuración original?`)) {
+                delete customLevels[levelNum];
+                saveCustomLevels();
+                populateLevelSelect();
+                renderCustomLevelsList();
+                alert(`✅ Nivel ${levelNum} restaurado`);
+            }
+        }
+        
+        function renderCustomLevelsList() {
+            const list = document.getElementById('customLevelsList');
+            
+            const customLevelNums = Object.keys(customLevels).map(Number).sort((a, b) => a - b);
+            
+            if (customLevelNums.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay niveles personalizados</p>';
+                return;
+            }
+            
+            list.innerHTML = '';
+            customLevelNums.forEach(levelNum => {
+                const config = customLevels[levelNum];
+                const originalPairs = levelConfigs[levelNum].pairs;
+                
+                const item = document.createElement('div');
+                item.className = 'line-item';
+                item.innerHTML = `
+                    <div class="line-preview">
+                        <div style="padding: 10px;">
+                            <h4>Nivel ${levelNum}</h4>
+                            <p style="color: #666; font-size: 0.9rem;">
+                                ${config.pairs} pares (original: ${originalPairs})
+                            </p>
+                        </div>
+                    </div>
+                    <div class="line-actions">
+                        <button class="btn btn-small btn-danger" onclick="resetLevel(${levelNum})">Restaurar</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        // Modificar initializeGame para usar niveles personalizados
+        const originalInitializeGame = initializeGame;
+        initializeGame = function() {
+            // Usar configuración personalizada si existe
+            const config = customLevels[currentLevelNum] || levelConfigs[currentLevelNum];
+            
+            cards = [];
+            let cardId = 0;
+            
+            config.patterns.forEach(pattern => {
+                cards.push(createCard(pattern, cardId++));
+                cards.push(createCard(pattern, cardId++));
+            });
+            
+            cards = shuffleArray(cards);
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            startTime = null;
+            gameActive = true;
+            
+            // Incrementar contador de partidas
+            const profileData = getCurrentProfileData();
+            updateProfileData({ gamesPlayed: (profileData.gamesPlayed || 0) + 1 });
+            
+            updateStats();
+            renderBoard();
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        };
+        
+        // Modificar renderBoard para usar config personalizado
+        const originalRenderBoard = renderBoard;
+        renderBoard = function() {
+            const board = document.getElementById('gameBoard');
+            const config = customLevels[currentLevelNum] || levelConfigs[currentLevelNum];
+            
+            board.className = `game-board ${config.boardClass}`;
+            board.innerHTML = '';
+            
+            cards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''}`;
+                cardElement.onclick = () => flipCard(card.id);
+                
+                // Verificar si hay imagen personalizada
+                const hasCustomImage = customImages[card.pattern.id];
+                
+                if (hasCustomImage) {
+                    cardElement.innerHTML = `
+                        <div class="card-front">
+                            <div class="bus-pattern" style="background: ${card.pattern.color}; padding: 0; overflow: hidden;">
+                                <img src="${customImages[card.pattern.id]}" class="custom-image" alt="${card.pattern.name}">
+                                <div class="vitrasa-logo-card">V</div>
+                            </div>
+                        </div>
+                        <div class="card-back"></div>
+                    `;
+                } else {
+                    cardElement.innerHTML = `
+                        <div class="card-front">
+                            <div class="bus-pattern ${card.pattern.class}" style="background: ${card.pattern.color};">
+                                <div class="vitrasa-logo-card">V</div>
+                                <div class="bus-number">${card.pattern.name}</div>
+                                <div class="bus-type">${card.pattern.type}</div>
+                                <div class="bus-fleet">${card.pattern.fleet}</div>
+                            </div>
+                        </div>
+                        <div class="card-back"></div>
+                    `;
+                }
+                
+                board.appendChild(cardElement);
+            });
+        };
+        
+        // Modificar updateStats para usar config personalizado
+        const originalUpdateStats = updateStats;
+        updateStats = function() {
+            const config = customLevels[currentLevelNum] || levelConfigs[currentLevelNum];
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('pairs').textContent = `${matchedPairs}/${config.pairs}`;
+        };
+        
+        // Modificar checkMatch para usar config personalizado
+        const originalCheckMatch = checkMatch;
+        checkMatch = function() {
+            const [card1, card2] = flippedCards;
+            const config = customLevels[currentLevelNum] || levelConfigs[currentLevelNum];
+            
+            if (card1.pattern.id === card2.pattern.id) {
+                card1.isMatched = true;
+                card2.isMatched = true;
+                matchedPairs++;
+                
+                if (matchedPairs === config.pairs) {
+                    levelCompleted();
+                }
+            } else {
+                card1.isFlipped = false;
+                card2.isFlipped = false;
+            }
+            
+            flippedCards = [];
+            updateStats();
+            renderBoard();
+        };
+        
+        // Modificar selectLevel para mostrar nombre personalizado
+        const originalSelectLevel = selectLevel;
+        selectLevel = function(levelNum) {
+            if (levelNum > 1 && !completedLevels.includes(levelNum - 1)) {
+                return;
+            }
+            
+            currentLevelNum = levelNum;
+            updateProfileData({ currentLevel: levelNum });
+            
+            const config = customLevels[levelNum] || levelConfigs[levelNum];
+            
+            document.getElementById('levelSelector').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('currentLevel').textContent = config.name;
+            initializeGame();
+        };
+        
+        // Modificar levelCompleted para usar config personalizado
+        const originalLevelCompleted = levelCompleted;
+        levelCompleted = function() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            
+            // Actualizar progreso
+            if (!completedLevels.includes(currentLevelNum)) {
+                completedLevels.push(currentLevelNum);
+            }
+            
+            // Actualizar estadísticas
+            const profileData = getCurrentProfileData();
+            const levelKey = `level${currentLevelNum}`;
+            
+            if (!profileData.stats[levelKey]) {
+                profileData.stats[levelKey] = { attempts: 0, bestTime: null, bestMoves: null };
+            }
+            
+            profileData.stats[levelKey].attempts++;
+            
+            if (!profileData.stats[levelKey].bestTime || elapsed < profileData.stats[levelKey].bestTime) {
+                profileData.stats[levelKey].bestTime = elapsed;
+            }
+            
+            if (!profileData.stats[levelKey].bestMoves || moves < profileData.stats[levelKey].bestMoves) {
+                profileData.stats[levelKey].bestMoves = moves;
+            }
+            
+            // Actualizar récords globales
+            if (!profileData.records[levelKey] || elapsed < profileData.records[levelKey].time) {
+                profileData.records[levelKey] = { time: elapsed, moves: moves, date: new Date().toISOString() };
+            }
+            
+            updateProfileData({
+                completedLevels: completedLevels,
+                totalPlayTime: (profileData.totalPlayTime || 0) + elapsed,
+                stats: profileData.stats,
+                records: profileData.records
+            });
+            
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const config = customLevels[currentLevelNum] || levelConfigs[currentLevelNum];
+            
+            document.getElementById('levelCompleteText').textContent = 
+                `¡Has completado el ${config.name}!`;
+            document.getElementById('finalStats').textContent = 
+                `Tiempo: ${timeStr} | Movimientos: ${moves}`;
+            
+            const nextBtn = document.getElementById('nextLevelBtn');
+            if (currentLevelNum < 60) {
+                nextBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'none';
+                document.getElementById('levelCompleteText').textContent = 
+                    '🏆 ¡LEGENDARIO! ¡Has conquistado todas las líneas auténticas de VITRASA! ¡Eres el MAESTRO SUPREMO del transporte vigués!';
+            }
+            
+            document.getElementById('victoryMessage').style.display = 'block';
+        };
+
+        
+        // Inicializar
+        renderProfiles();
+        updateLinesCount();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d494e63419b273c',t:'MTc3MjIxMjMzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
