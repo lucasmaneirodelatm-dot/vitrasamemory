@@ -113,7 +113,22 @@
      </div>
     </div>
    </div><!-- Admin Panel Screen -->
-   <div id="admin-screen" class="min-h-full hidden flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-700"></div><!-- Loading Screen -->
+   <div id="admin-screen" class="min-h-full hidden flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-700">
+    <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 w-full max-w-2xl">
+     <div class="text-center mb-6">
+      <h2 class="text-3xl font-bold text-white">⚙️ Panel Admin</h2>
+     </div>
+     <div id="admin-login" class="space-y-4 mb-6">
+      <input type="password" id="admin-password" placeholder="Contraseña Admin" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-blue-300 border border-white/30 focus:outline-none focus:border-yellow-400"> <button onclick="validateAdminPassword()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all">🔓 Acceder</button>
+     </div>
+     <div id="admin-panel" class="hidden space-y-4">
+      <h3 class="text-xl font-bold text-white mb-4">Descargar Plantilla JSON</h3>
+      <p class="text-blue-200 text-sm mb-4">Descarga la plantilla para crear tu archivo de datos:</p><button onclick="downloadJSONTemplate()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-3 px-6 rounded-xl transition-all">📥 Descargar Plantilla JSON</button> <button onclick="downloadLevelGuide()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-all">📋 Descargar Guía de Niveles</button>
+      <hr class="border-white/20 my-4">
+      <h3 class="text-xl font-bold text-white mb-4">Gestión de Datos</h3><button onclick="exportAllProgress()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl transition-all">💾 Exportar Progreso</button> <button onclick="resetAllProgress()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all">🗑️ Limpiar Todo</button>
+     </div><button onclick="backToProfiles()" class="w-full mt-6 bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-xl transition-all">← Volver</button>
+    </div>
+   </div><!-- Loading Screen -->
    <div id="loading-screen" class="min-h-full hidden flex-col items-center justify-center p-4">
     <div class="text-6xl mb-4">
      🚌
@@ -152,14 +167,12 @@
       </div>
      </div>
     </div>
-    <div class="mt-6 text-center"><button onclick="backToProfiles()" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-6 rounded-xl transition-all">👤 Cambiar Perfil</button>
-    </div>
-    <div class="mt-4 text-blue-300 text-sm text-center">
+    <div class="mt-6 text-blue-300 text-sm text-center">
      <p>💡 Consejo: Completa niveles para desbloquear los siguientes</p>
     </div>
    </div><!-- Game Screen -->
    <div id="game-screen" class="min-h-full hidden flex-col p-4">
-    <div class="flex items-center justify-between mb-4"><button onclick="backToProfiles()" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2"> 👤 Perfiles </button>
+    <div class="flex items-center justify-between mb-4"><button id="back-btn" onclick="backToProfiles()" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2"> ← Volver </button>
      <div class="text-center">
       <h2 id="level-title" class="text-xl font-bold text-white">Nivel 1</h2>
       <p id="pairs-info" class="text-blue-200 text-sm">2 pares</p>
@@ -210,6 +223,7 @@
     let matchedPairs = 0;
     let moves = 0;
     let isLocked = false;
+    let isAdminMode = false;
 
     // Calculate pairs for each level
     function getPairsForLevel(level) {
@@ -256,14 +270,12 @@
         if (saved) {
           profiles = JSON.parse(saved);
         } else {
-          profiles = [
-            { name: 'Admin', unlocked: 1, completed: [] }
-          ];
+          profiles = [];
           saveProfiles();
         }
       } catch (e) {
         console.error('Error loading profiles:', e);
-        profiles = [{ name: 'Admin', unlocked: 1, completed: [] }];
+        profiles = [];
       }
     }
 
@@ -316,24 +328,6 @@
         btn.onclick = () => selectProfile(index);
         list.appendChild(btn);
       });
-      
-      // Delete buttons for each profile (except first)
-      profiles.forEach((profile, index) => {
-        if (index > 0) {
-          const deleteBtn = document.createElement('button');
-          deleteBtn.className = 'col-span-1 md:col-span-2 text-red-400 hover:text-red-300 text-sm underline mt-2';
-          deleteBtn.textContent = `🗑️ Eliminar "${profile.name}"`;
-          deleteBtn.onclick = (e) => {
-            e.stopPropagation();
-            if (confirm(`¿Eliminar perfil "${profile.name}"?`)) {
-              profiles.splice(index, 1);
-              saveProfiles();
-              generateProfileButtons();
-            }
-          };
-          // This is a workaround, we'll add delete buttons after
-        }
-      });
     }
 
     function selectProfile(index) {
@@ -347,10 +341,12 @@
       const name = nameInput.value.trim();
       
       if (!name) {
+        alert('Por favor ingresa un nombre para el perfil');
         return;
       }
       
       if (profiles.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        alert('Ya existe un perfil con ese nombre');
         return;
       }
       
@@ -365,34 +361,10 @@
       generateProfileButtons();
     }
 
-    function showAdminPanel() {
-      // Removed - no admin panel
-    }
-
-    function validateAdminPassword() {
-      // Removed - no admin panel
-    }
-
     function backToProfiles() {
       saveCurrentProgress();
       currentProfile = null;
       showProfileScreen();
-    }
-
-    function downloadJSONTemplate() {
-      // Removed - no admin panel
-    }
-
-    function downloadLevelGuide() {
-      // Removed - no admin panel
-    }
-
-    function exportAllProgress() {
-      // Removed - no admin panel
-    }
-
-    function resetAllProgress() {
-      // Removed - no admin panel
     }
 
     // Error handling
@@ -803,5 +775,5 @@
     
     init();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d586194a209ec9e',t:'MTc3MjM3MDQwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d586be9e040273c',t:'MTc3MjM3MDgzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
