@@ -1,5 +1,5 @@
-self.addEventListener("install", event => {
-console.log("Service Worker activo");
-});
-
-self.addEventListener("fetch", event => {});
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js")
+    .then(() => console.log("Service Worker registrado"))
+    .catch(console.error);
+}
